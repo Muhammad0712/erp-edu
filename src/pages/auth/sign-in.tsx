@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, type FormEvent } from "react"
 import { authService } from "@service"
 import { useNavigate } from "react-router-dom"
 import { setItem } from "../../helpers"
@@ -26,10 +26,11 @@ const SignIn = () => {
   const [role, setRole] = useState('')
   const navigate = useNavigate()
 
-  const submit = async()=> {
+  const submit = async(e: FormEvent<HTMLFormElement>)=> {
+    e.preventDefault()
     const payload = {email, password}
     const res = await authService.signIn(payload, role)
-    if (res.status === '201') {
+    if (res.status === 201) {
       setItem('access_token', res.data.access_token);
       setItem("role", role)
       navigate(`/${role}`)
