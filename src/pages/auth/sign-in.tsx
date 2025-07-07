@@ -1,8 +1,9 @@
 
-import { useState, type FormEvent } from "react"
-import { authService } from "@service"
+import React, { useState, } from "react"
+import { authService } from "@service/auth.service"
 import { useNavigate } from "react-router-dom"
 import { setItem } from "../../helpers"
+import { Select } from "antd"
 // import { Formik, Form, Field, ErrorMessage } from "formik";
 // import * as Yup from "yup";
 
@@ -26,14 +27,18 @@ const SignIn = () => {
   const [role, setRole] = useState('')
   const navigate = useNavigate()
 
-  const submit = async(e: FormEvent<HTMLFormElement>)=> {
+  const submit = async(e: React.MouseEvent<HTMLElement>)=> {
     e.preventDefault()
     const payload = {email, password}
     const res = await authService.signIn(payload, role)
     if (res.status === 201) {
       setItem('access_token', res.data.access_token);
       setItem("role", role)
-      navigate(`/${role}`)
+      if (role === "admin") {
+        navigate(`/${role}/groups`)
+      } else {
+        navigate(`/${role}`)
+      }
     }
   }
   return (
@@ -66,12 +71,29 @@ const SignIn = () => {
             <h1 className="text-4xl font-bold text-white">Sign In</h1>
             <input type="email" placeholder="Email..." className="w-[90%] h-[40px] text-xl text-white bg-transparent outline-none" onChange={(e)=> setEmail(e.target.value) }/>
             <input type="password" placeholder="Password..." className="w-[90%] h-[40px] text-xl text-white bg-transparent outline-none " onChange={(e)=> setPassword(e.target.value)}/>
-              <select className="text-white outline-none" onChange={(e)=> setRole(e.target.value)}>
-                <option value="teacher" className="text-black">Teacher</option>
-                <option value="student" className="text-black">Student</option>
-                <option value="admin" className="text-black">Admin</option>
-                <option value="lid" className="text-black">Lid</option>
-              </select>
+            <Select
+              defaultValue="lucy"
+              style={{ width: 200 }}
+              onChange={(value)=> setRole(value)}
+              options={[
+                {
+                  label: <span>Admin</span>,
+                  title: 'Admins',
+                  options: [
+                    { label: <span>Admin</span>, value: 'admin' },
+                  ],
+                },
+                {
+                  label: <span>Others</span>,
+                  title: 'others',
+                  options: [
+                    { label: <span>Teachers</span>, value: 'teacher' },
+                    { label: <span>Students</span>, value: 'student' },
+                    { label: <span>Lids</span>, value: 'lids' },
+                  ],
+                },
+              ]}
+            />
             <button className="border w-[100px] h-[40px] opacity-100 text-white rounded-md" onClick={submit}>Submit</button>
           </form>
       </div>

@@ -4,8 +4,8 @@ import type { Group } from "../types/group";
 
 export const groupsService = {
 
-    async createGroup(data: Group){
-        const res = await apiConfig().postRequest(ApiUrls.GROUPS, data)
+    async createGroup(payload: Group){
+        const res = await apiConfig().postRequest(ApiUrls.GROUPS, payload)
         return res
     },
 
@@ -14,17 +14,17 @@ export const groupsService = {
         return res
     },
 
-    async getGroupById(id: string){
+    async getGroupById(id: number){
         const res = await apiConfig().getRequest(`${ApiUrls.GROUPS}${id}`)
         return res
     },
 
-    async updateGroupById(id: string, data: any){
-        const res = await apiConfig().putRequest(`${ApiUrls.GROUPS}${id}`, data)
+    async updateGroupById(id: number, data: object){
+        const res = await apiConfig().patchRequest(`${ApiUrls.GROUPS}${id}`, data)
         return res
     },
 
-    async deleteGroupById(id: string){
+    async deleteGroupById(id: number){
         const res = await apiConfig().deleteRequest(`${ApiUrls.GROUPS}${id}`)
         return res
     }

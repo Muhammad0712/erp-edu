@@ -2,6 +2,8 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 
 import App from "../App"
 import { AdminLayout, Groups, NotFound, SignIn, SignUp, StudentLayout, TeacherLayout } from "@pages";
+import LayOut from "../components/lay-out";
+import SignInDatePicker from "../components/date-picker";
 
 
 const Router = () => {
@@ -14,6 +16,9 @@ const Router = () => {
                 {/* ADMIN LAYOUT */}
                 <Route path="/admin" element={ <AdminLayout/> }>
                     <Route path="groups" element={ <Groups/> } />
+                    <Route path="lay-out" element={ <LayOut/> } />
+                    <Route path="date-picker" element={ <SignInDatePicker/> } />
+
                 </Route>
                 {/* TEACHER LAYOUT */}
                 <Route path="/teacher" element={ <TeacherLayout/> }>

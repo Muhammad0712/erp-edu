@@ -29,6 +29,15 @@ export function apiConfig(){
         }
     }
 
+    async function patchRequest(url: string, body: object={}) {
+        try {
+            const res = await axiosInstance.patch(url, body);
+            return res;
+        } catch (error) {
+            Notification('error', error?.message)
+        }
+    }
+
     async function deleteRequest(url: string, params: object={}) {
         try {
             const res = await axiosInstance.delete(url, {params});
@@ -43,6 +52,7 @@ export function apiConfig(){
         getRequest,
         postRequest,
         putRequest,
+        patchRequest,
         deleteRequest
     }
 }

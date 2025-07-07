@@ -12,7 +12,7 @@
       "@api/*": ["./src/api/*"],
       "@types": ["./src/types"],
       "@pages": ["./src/pages"],
-      "@service": ["./src/service"],
+      "@service/*": ["./src/service/*"],
       "@helpers": ["./src/helpers"],
     },
 
