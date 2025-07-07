@@ -72,7 +72,7 @@ const SignIn = () => {
             <input type="email" placeholder="Email..." className="w-[90%] h-[40px] text-xl text-white bg-transparent outline-none" onChange={(e)=> setEmail(e.target.value) }/>
             <input type="password" placeholder="Password..." className="w-[90%] h-[40px] text-xl text-white bg-transparent outline-none " onChange={(e)=> setPassword(e.target.value)}/>
             <Select
-              defaultValue="lucy"
+              defaultValue="Admin"
               style={{ width: 200 }}
               onChange={(value)=> setRole(value)}
               options={[

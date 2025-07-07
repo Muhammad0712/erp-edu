@@ -8,5 +8,4 @@ const TeacherLayout = lazy(()=> import('./teacher-layout/teacher-layout'))
 const Groups = lazy(()=> import('./groups/groups'))
 const NotFound = lazy(()=> import('./not-found/not-found'))
 
-
 export {SignIn, SignUp, AdminLayout, StudentLayout, TeacherLayout, Groups, NotFound}

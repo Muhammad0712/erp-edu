@@ -3,14 +3,17 @@ import { Button, Modal, Select} from 'antd';
 import { coursesService } from '@service/courses.service';
 import { groupsService } from '@service/groups.service'
 import { Notification } from '@helpers';
+import type { DatePickerProps } from 'antd';
+import { DatePicker, Space, theme } from 'antd';
+import type { Dayjs } from 'dayjs';
 
 const AddGroupModal = ({onSuccess}: any) => {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     name: '',
     course_id: 0,
-    start_date: '2020-01-01',
-    end_date: '2020-01-01',
+    start_date: '',
+    end_date: '',
     status: '',
   });
   const [courses, setCourses] = useState([{
@@ -47,10 +50,13 @@ const AddGroupModal = ({onSuccess}: any) => {
       end_date: new Date(form.end_date),
       status: form.status
     };
+    console.log(payload);
+    
     const res = await groupsService.createGroup(payload);
-    console.log(res);
+    
     if (res?.status === 201) {
       Notification('success', "Guruh muvaffaqiyatli qo'shildi")
+      setForm({name: '', course_id: 1, start_date: '', end_date: '', status: ''})
       onSuccess()
     }
     setOpen(false);
@@ -60,11 +66,30 @@ const AddGroupModal = ({onSuccess}: any) => {
     setOpen(false);
   };
 
+  // DATEPICKER 
+  const { token } = theme.useToken();
+  const style: React.CSSProperties = {
+    border: `1px solid ${token.colorPrimary}`,
+    borderRadius: '50%',
+  };
+  const cellRender: DatePickerProps<Dayjs>['cellRender'] = (current, info) => {
+    if (info.type !== 'date') {
+      return info.originNode;
+    }
+    if (typeof current === 'number' || typeof current === 'string') {
+      return <div className="ant-picker-cell-inner">{current}</div>;
+    }
+    return (
+      <div className="ant-picker-cell-inner" style={current.date() === 1 ? style : {}}>
+        {current.date()}
+      </div>
+    );
+  };
 
   return (
     <>
       <Button type="primary"
-        className="!border-2 !text-white !w-[120px] !h-[40px] !flex !items-center !justify-center !rounded-md !bg-black !opacity-50"
+        className="!border-2 !text-white !w-[120px] !h-[40px] !flex !items-center !justify-center !rounded-md !bg-[green]"
         onClick={showModal}
       >
         + Add Group
@@ -106,20 +131,40 @@ const AddGroupModal = ({onSuccess}: any) => {
               onChange={(value) => setForm({ ...form, course_id: Number(value) })}
               />
             </div>
-            <div className="w-[90%] flex flex-col gap-[10px]">
-                <label>Start Date:</label>
-                <input type="date" required value={form.start_date} className='border-none outline-none bg-gray-100 rounded-md w-[100%] h-[40px] text-xl' onChange={(e)=> setForm({...form, start_date: e.target.value})}/>
-            </div>
-            <div className="w-[90%] flex flex-col gap-[10px]">
-                <label>End Date:</label>
-                <input type="date" required value={form.end_date} className='border-none outline-none bg-gray-100 rounded-md w-[100%] h-[40px] text-xl' onChange={(e)=> setForm({...form, end_date: e.target.value})}/>
-            </div>
+            <Space size={10} direction="vertical">
+              <div className="w-[90%] flex gap-1 items-center ">
+                <label className='w-[80px]'> Start date:</label>
+                <DatePicker cellRender={cellRender} required value={form.start_date} onChange={(value) => setForm({ ...form, start_date: value })}
+                />
+              </div>
+              <div className="w-[90%] flex gap-1 items-center ">
+                <label className='w-[80px]'> End date:</label>
+                <DatePicker cellRender={cellRender} required value={form.end_date} onChange={(value) => setForm({ ...form, end_date: value })}/>
+              </div>
+            </Space>
             <div className="w-[90%] flex flex-col gap-[10px]">
                 <label>Status: </label>
-                <select required value={form.status} className='border-none outline-none bg-gray-100 rounded-md w-[100%] h-[40px] text-xl' onChange={(e)=> setForm({...form, status: e.target.value})}>
-                  <option value="new">New</option>
-                  <option value="active">Active</option>
-                </select>
+                <Select
+                  showSearch
+                  
+                  placeholder="Search to Select"
+                  optionFilterProp="label"
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                  }
+                  options={[
+                    {
+                      label: 'new',
+                      value: 'new'
+                    },
+                    {
+                      label: 'active',
+                      value: 'active'
+                    },
+                  ]}
+                  value={form.status}
+                  onChange={(value)=> setForm({...form, status: value})}
+                />
             </div>
         </form>
       </Modal>

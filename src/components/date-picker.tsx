@@ -1,5 +1,5 @@
 import React from 'react';
-import { DatePicker, Space, Typography } from 'antd';
+import { DatePicker, Space } from 'antd';
 import type { DatePickerProps } from 'antd';
 import type { Dayjs } from 'dayjs';
 
@@ -31,9 +31,21 @@ const disabled7DaysDate: DatePickerProps['disabledDate'] = (current, { from, typ
 };
 
 const SignInDatePicker: React.FC = () => (
-  <Space direction="vertical">
-    <Typography.Title level={5}>7 days range</Typography.Title>
-    <RangePicker disabledDate={disabled7DaysDate} />
+  <Space direction="vertical" style={{
+    width: '90%',
+    height: '40px',
+    border: 'none',
+    outline: 'none',
+    backgroundColor: '#f3f4f6', 
+    borderRadius: '0.375rem', 
+    fontSize: '1.25rem',
+  }}>
+    <RangePicker disabledDate={disabled7DaysDate} 
+        style={{
+            width: '100%',
+            height: '40px'
+        }}
+    />
   </Space>
 );
 

@@ -11,6 +11,7 @@ export const groupsService = {
 
     async getGroups(){
         const res = await apiConfig().getRequest(ApiUrls.GROUPS);
+        console.log(res);
         return res
     },
 
