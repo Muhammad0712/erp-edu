@@ -1,7 +1,8 @@
 export interface Group {
+    id?: number;
     name: string;
     course_id: number;
-    start_date: Date;
-    end_date: Date;
+    start_date: Date | any;
+    end_date: Date | any;
     status: string;
 }

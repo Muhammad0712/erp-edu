@@ -1,56 +1,3 @@
-// import React, { useState } from 'react';
-// import { Button, Modal } from 'antd';
-// import { groupsService } from '../../../service';
-// import { Notification } from '../../../helpers';
-
-// type Props = {
-//     id: any;
-//     onSuccess?: () => void;
-//   };
-
-// const UpdateGroupModal = ({ id, onSuccess = () => {} }: Props) => {
-//   const [open, setOpen] = useState(false);
-//   const [form, setForm] = useState({
-//     name: '',
-//     course_id: 0,
-//     start_date: '2020-01-01',
-//     end_date: '2020-01-01',
-//     status: '',
-//   })
-
-//   const showModal = () => {
-//     setOpen(true);
-//   };
-
-//   const handleOk = async(e: React.MouseEvent<HTMLElement>) => {
-//     e.preventDefault()
-//     const payload = {
-//         name: form.name,
-//         course_id: form.course_id,
-//         start_date: form.start_date,
-//         end_date: form.end_date,
-//         status: form.status
-//     }
-//     const res = await groupsService.updateGroupById(id, payload)
-//     if (res?.status === 200) {
-//         Notification('success', "Guruh muvaffaqiyatli o'zgartirildi")
-//         onSuccess()
-//     }
-//     setOpen(false);
-//   };
-  
-//   const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
-//     console.log(e);
-//     setOpen(false);
-//   };
-
-//   return (
-//     
-//   );
-// };
-
-// export default UpdateGroupModal;
-
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Select} from 'antd';
 import { coursesService } from '@service/courses.service';
@@ -61,7 +8,7 @@ import { DatePicker, Space, theme } from 'antd';
 import type { Dayjs } from 'dayjs';
 
 type Props = {
-  group: object,
+  group: any,
   onSuccess: ()=> void
 }
 
@@ -69,14 +16,17 @@ const UpdateGroupModal = ({group, onSuccess}: Props) => {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     name: '',
-    course_id: 0,
+    course_id: NaN,
     start_date: '',
     end_date: '',
     status: '',
   });
-  const [courses, setCourses] = useState([{
-    title: ""
-  }])
+  type Course = {
+    id: number;
+    title: string;
+  };
+
+  const [courses, setCourses] = useState<Course[]>([])
 
   const showModal = () => {
     setOpen(true);
@@ -84,7 +34,7 @@ const UpdateGroupModal = ({group, onSuccess}: Props) => {
 
   useEffect(()=> {
     getAllCourses();  
-  },[group])
+  },[])
 
   const getAllCourses = async () => {
     const res = await coursesService.getAllCourses();
@@ -98,23 +48,31 @@ const UpdateGroupModal = ({group, onSuccess}: Props) => {
   
     return res;
   };
-  
+    
   const handleOk = async(e: React.MouseEvent<HTMLElement>) => {
+    const start_date = onlyDate(form.start_date)
+    const end_date = onlyDate(form.end_date)
     e.preventDefault();
     const payload = {
+      id: group.id,
       name: form.name,
       course_id: form.course_id,
-      start_date: new Date(form.start_date),
-      end_date: new Date(form.end_date),
+      start_date: start_date,
+      end_date: end_date,
       status: form.status
     };
     console.log(payload);
-    const res = await groupsService.updateGroupById(group.id, payload);
+    const res = await groupsService.updateGroup(payload);
     if (res?.status === 200) {
       Notification('success', "Guruh muvaffaqiyatli o'zgartirildi")
       onSuccess()
     }
     setOpen(false);
+  };
+
+  const onlyDate = (str: string) => {
+    const [year, month, day] = str.split('-').map(Number);
+    return new Date(year, month - 1, day); // Date tipida qaytaradi
   };
 
   const handleCancel = async() => {

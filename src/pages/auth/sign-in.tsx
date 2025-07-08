@@ -1,71 +1,35 @@
 
 import React, { useState, } from "react"
-import { authService } from "@service/auth.service"
 import { useNavigate } from "react-router-dom"
 import { setItem } from "../../helpers"
 import { Select } from "antd"
-// import { Formik, Form, Field, ErrorMessage } from "formik";
-// import * as Yup from "yup";
-
-// const validationSchema = Yup.object().shape({
-//   email: Yup.string()
-//     .email("Invalid email format")
-//     .required("Please enter your email"),
-//   password: Yup.string()
-//     .min(6, "Password must be at least 6 characters")
-//     .required("Please enter your password")
-// });
-
-// const initialValues = {
-//   email: "",
-//   password: ""
-// };
+import { useAuth } from "@hooks/use-auth" 
 
 const SignIn = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState('')
   const navigate = useNavigate()
+  const { mutate } = useAuth()
 
   const submit = async(e: React.MouseEvent<HTMLElement>)=> {
     e.preventDefault()
     const payload = {email, password}
-    const res = await authService.signIn(payload, role)
-    if (res.status === 201) {
-      setItem('access_token', res.data.access_token);
-      setItem("role", role)
-      if (role === "admin") {
-        navigate(`/${role}/groups`)
-      } else {
-        navigate(`/${role}`)
+    mutate(
+      { data: payload, role },
+      {
+        onSuccess: (res: any)=> {
+          if (res.status === 201) {
+            setItem('access_token', res.data.access_token)
+            setItem('role', role)
+            navigate(`${role}`)
+          }
+        }
       }
-    }
+    )
   }
   return (
     <>
-    {/* <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={submit}
-    >
-      <Form className="w-[100%] h-[100vh] flex items-center justify-center flex-col">
-        
-        <div>
-          <label>Email:</label>
-          <Field name="email" placeholder="Email"/>
-          <ErrorMessage name="email" component="div" className="text-red-700" />
-        </div>
-        <div>
-          <label>Password:</label>
-          <Field name="password" type="password" placeholder="Password" />
-          <ErrorMessage name="password" component="div" className="text-red-700" />
-        </div>
-        <select name="" id="">
-          
-        </select>
-        <button type="submit">Submit</button>
-      </Form>
-    </Formik> */}
       <div className="w-[100%] h-[100vh] flex items-center justify-center ">
           <form className="w-[400px] h-[300px] flex flex-col justify-evenly items-center bg-black opacity-60 rounded-2xl"> 
             <h1 className="text-4xl font-bold text-white">Sign In</h1>

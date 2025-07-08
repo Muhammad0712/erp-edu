@@ -1,32 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Select} from 'antd';
-import { coursesService } from '@service/courses.service';
-import { groupsService } from '@service/groups.service'
 import { Notification } from '@helpers';
 import type { DatePickerProps } from 'antd';
 import { DatePicker, Space, theme } from 'antd';
 import type { Dayjs } from 'dayjs';
+import useGroup from '../../../hooks/useGroups';
+import { coursesService } from '../../../service/courses.service';
+import type { Group } from '../../../types/group';
 
-const AddGroupModal = ({onSuccess}: any) => {
+type fetch = {
+  fetchGroups: ()=> void
+}
+const AddGroupModal = ({fetchGroups}: fetch) => {
+  type Course = {
+    id: number,
+    title: string
+  }
+
+  // --------------------STATES--------------------
+  const [courses, setCourses] = useState<Course[]>([])
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<Group>({
     name: '',
-    course_id: 0,
+    course_id: NaN,
     start_date: '',
     end_date: '',
-    status: '',
+    status: ''
   });
-  const [courses, setCourses] = useState([{
-    title: ""
-  }])
-
+  const {useGroupCreate} = useGroup();
+  const {mutate: createFn} = useGroupCreate();
   const showModal = () => {
     setOpen(true);
   };
+  // ----------------------------------------------
 
   useEffect(()=> {
-    getAllCourses();  
-  })
+    getAllCourses();
+  },[])
+
+  useEffect(()=> {
+    fetchGroups()
+  },[fetchGroups])
+
+
 
   const getAllCourses = async () => {
     const res = await coursesService.getAllCourses();
@@ -40,25 +56,20 @@ const AddGroupModal = ({onSuccess}: any) => {
   
     return res;
   };
-  
+
   const handleOk = async(e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     const payload = {
       name: form.name,
       course_id: form.course_id,
-      start_date: new Date(form.start_date),
-      end_date: new Date(form.end_date),
+      start_date: form.start_date,
+      end_date: form.end_date,
       status: form.status
     };
     console.log(payload);
-    
-    const res = await groupsService.createGroup(payload);
-    
-    if (res?.status === 201) {
-      Notification('success', "Guruh muvaffaqiyatli qo'shildi")
-      setForm({name: '', course_id: 1, start_date: '', end_date: '', status: ''})
-      onSuccess()
-    }
+    createFn(payload, {onSuccess: ()=> {
+      Notification('success', "Guruh muvaffaqiyatli qo'shildi!")
+    }})
     setOpen(false);
   };
 

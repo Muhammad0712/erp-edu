@@ -1,10 +1,10 @@
 import axiosInstance from ".";
 import { Notification } from "@helpers";
 
-export function apiConfig(){
-    async function getRequest(url: string, params: object={}){
+export function apiConfig() {
+    async function getRequest(url: string, params: object = {}) {
         try {
-            const res =  await axiosInstance.get(url, {params})
+            const res = await axiosInstance.get(url, { params })
             return res
         } catch (error: any) {
             console.log(error?.response?.data);
@@ -12,7 +12,7 @@ export function apiConfig(){
         }
     }
 
-    async function postRequest(url: string, body: object={}) {
+    async function postRequest(url: string, body: object = {}) {
         try {
             const res = await axiosInstance.post(url, body);
             return res;
@@ -22,7 +22,7 @@ export function apiConfig(){
         }
     }
 
-    async function putRequest(url: string, body: object={}) {
+    async function putRequest(url: string, body: object = {}) {
         try {
             const res = await axiosInstance.put(url, body);
             return res;
@@ -32,7 +32,7 @@ export function apiConfig(){
         }
     }
 
-    async function patchRequest(url: string, body: object={}) {
+    async function patchRequest(url: string, body: object = {}) {
         try {
             const res = await axiosInstance.patch(url, body);
             return res;
@@ -42,9 +42,9 @@ export function apiConfig(){
         }
     }
 
-    async function deleteRequest(url: string, params: object={}) {
+    async function deleteRequest(url: string, params: object = {}) {
         try {
-            const res = await axiosInstance.delete(url, {params});
+            const res = await axiosInstance.delete(url, { params });
             return res;
         } catch (error: any) {
             console.log(error?.response?.data);
@@ -52,7 +52,7 @@ export function apiConfig(){
         }
     }
 
-    
+
     return {
         getRequest,
         postRequest,
