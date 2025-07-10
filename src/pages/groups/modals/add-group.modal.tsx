@@ -1,25 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Modal, Select} from 'antd';
-import { Notification } from '@helpers';
+import React, { useState } from 'react';
+import { Modal, Select } from 'antd';
 import type { DatePickerProps } from 'antd';
 import { DatePicker, Space, theme } from 'antd';
 import type { Dayjs } from 'dayjs';
-import useGroup from '../../../hooks/useGroups';
-import { coursesService } from '../../../service/courses.service';
-import type { Group } from '../../../types/group';
+import { useGroup } from '@hooks/useGroups';
+import type { Group } from '@types';
+import { useCourses } from '@hooks/useCourses';
 
-type fetch = {
-  fetchGroups: ()=> void
+interface props {
+  setOpen: any
+  showModal: ()=> void
+  open: boolean
 }
-const AddGroupModal = ({fetchGroups}: fetch) => {
-  type Course = {
-    id: number,
-    title: string
-  }
+
+
+const AddGroupModal = ({setOpen, open}: props) => {
 
   // --------------------STATES--------------------
-  const [courses, setCourses] = useState<Course[]>([])
-  const [open, setOpen] = useState(false);
   const [form, setForm] = useState<Group>({
     name: '',
     course_id: NaN,
@@ -27,37 +24,14 @@ const AddGroupModal = ({fetchGroups}: fetch) => {
     end_date: '',
     status: ''
   });
-  const {useGroupCreate} = useGroup();
-  const {mutate: createFn} = useGroupCreate();
-  const showModal = () => {
-    setOpen(true);
-  };
+  const { useGroupCreate } = useGroup();
+  const { mutate: createFn } = useGroupCreate();
+  const { data: courseData } = useCourses()
+  const courses = courseData?.data.courses ?? [];
+
   // ----------------------------------------------
 
-  useEffect(()=> {
-    getAllCourses();
-  },[])
-
-  useEffect(()=> {
-    fetchGroups()
-  },[fetchGroups])
-
-
-
-  const getAllCourses = async () => {
-    const res = await coursesService.getAllCourses();
-    const courseList = res?.data?.courses;
-  
-    if (Array.isArray(courseList)) {
-      setCourses(courseList);
-    } else {
-      setCourses([]);
-    }
-  
-    return res;
-  };
-
-  const handleOk = async(e: React.MouseEvent<HTMLElement>) => {
+  const handleOk = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     const payload = {
       name: form.name,
@@ -67,13 +41,13 @@ const AddGroupModal = ({fetchGroups}: fetch) => {
       status: form.status
     };
     console.log(payload);
-    createFn(payload, {onSuccess: ()=> {
-      Notification('success', "Guruh muvaffaqiyatli qo'shildi!")
-    }})
+    createFn(payload, {
+      onSuccess: () => {}
+    })
     setOpen(false);
   };
 
-  const handleCancel = async() => {
+  const handleCancel = async () => {
     setOpen(false);
   };
 
@@ -99,27 +73,28 @@ const AddGroupModal = ({fetchGroups}: fetch) => {
 
   return (
     <>
-      <Button type="primary"
+      {/* <Button type="primary"
         className="!border-2 !text-white !w-[120px] !h-[40px] !flex !items-center !justify-center !rounded-md !bg-[green]"
         onClick={showModal}
       >
         + Add Group
-      </Button>
+      </Button> */}
       <Modal
         title="Add Group"
         open={open}
         onOk={handleOk}
         onCancel={handleCancel}
       >
+       
         <form className='w-[100%] flex flex-col gap-[20px] items-center'>
-            <div className="w-[90%] flex flex-col gap-[5px]">
-                <label>Group name:</label>
-                <input type="text" required value={form.name} className='border-none outline-none bg-gray-100 rounded-md w-[100%] h-[40px] text-xl' onChange={(e)=> setForm({...form, name: e.target.value})}/>
-            </div>
-            <div className="w-[90%] flex flex-col gap-[10px]">
-              <label>Course:</label>
-              {/* <input type="text" required value={form.course_id} className='border-none outline-none bg-gray-100 rounded-md w-[100%] h-[40px] text-xl' onChange={(e)=> setForm({...form, course_id: Number(e.target.value)})}/> */}
-              <Select
+          <div className="w-[90%] flex flex-col gap-[5px]">
+            <label>Group name:</label>
+            <input type="text" required value={form.name} className='border-none outline-none bg-gray-100 rounded-md w-[100%] h-[40px] text-xl' onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          </div>
+          <div className="w-[90%] flex flex-col gap-[10px]">
+            <label>Course:</label>
+            {/* <input type="text" required value={form.course_id} className='border-none outline-none bg-gray-100 rounded-md w-[100%] h-[40px] text-xl' onChange={(e)=> setForm({...form, course_id: Number(e.target.value)})}/> */}
+            <Select
               showSearch
               style={{
                 width: '100%',
@@ -133,50 +108,50 @@ const AddGroupModal = ({fetchGroups}: fetch) => {
               placeholder="Search to Select"
               optionFilterProp="label"
               filterSort={(optionA, optionB) =>
-                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                String(optionA?.label ?? '').toLowerCase().localeCompare(String(optionB?.label ?? '').toLowerCase())
               }
-              options={courses.map(course => ({
+              options={courses.map((course: any) => ({
                 label: course.title,
                 value: course.id
               }))}
               onChange={(value) => setForm({ ...form, course_id: Number(value) })}
+            />
+          </div>
+          <Space size={10} direction="vertical">
+            <div className="w-[90%] flex gap-1 items-center ">
+              <label className='w-[80px]'> Start date:</label>
+              <DatePicker cellRender={cellRender} required value={form.start_date} onChange={(value) => setForm({ ...form, start_date: value })}
               />
             </div>
-            <Space size={10} direction="vertical">
-              <div className="w-[90%] flex gap-1 items-center ">
-                <label className='w-[80px]'> Start date:</label>
-                <DatePicker cellRender={cellRender} required value={form.start_date} onChange={(value) => setForm({ ...form, start_date: value })}
-                />
-              </div>
-              <div className="w-[90%] flex gap-1 items-center ">
-                <label className='w-[80px]'> End date:</label>
-                <DatePicker cellRender={cellRender} required value={form.end_date} onChange={(value) => setForm({ ...form, end_date: value })}/>
-              </div>
-            </Space>
-            <div className="w-[90%] flex flex-col gap-[10px]">
-                <label>Status: </label>
-                <Select
-                  showSearch
-                  
-                  placeholder="Search to Select"
-                  optionFilterProp="label"
-                  filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                  }
-                  options={[
-                    {
-                      label: 'new',
-                      value: 'new'
-                    },
-                    {
-                      label: 'active',
-                      value: 'active'
-                    },
-                  ]}
-                  value={form.status}
-                  onChange={(value)=> setForm({...form, status: value})}
-                />
+            <div className="w-[90%] flex gap-1 items-center ">
+              <label className='w-[80px]'> End date:</label>
+              <DatePicker cellRender={cellRender} required value={form.end_date} onChange={(value) => setForm({ ...form, end_date: value })} />
             </div>
+          </Space>
+          <div className="w-[90%] flex flex-col gap-[10px]">
+            <label>Status: </label>
+            <Select
+              showSearch
+
+              placeholder="Search to Select"
+              optionFilterProp="label"
+              filterSort={(optionA, optionB) =>
+                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+              }
+              options={[
+                {
+                  label: 'new',
+                  value: 'new'
+                },
+                {
+                  label: 'active',
+                  value: 'active'
+                },
+              ]}
+              value={form.status}
+              onChange={(value) => setForm({ ...form, status: value })}
+            />
+          </div>
         </form>
       </Modal>
     </>

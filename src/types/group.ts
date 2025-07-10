@@ -6,3 +6,8 @@ export interface Group {
     end_date: Date | any;
     status: string;
 }
+
+export type MyType = {
+    setData: (val: any) => void;
+    groups: any[]
+}

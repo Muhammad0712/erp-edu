@@ -1,25 +1,26 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom"
-
 import App from "../App"
-import { AdminLayout, Groups, NotFound, SignIn, SignUp, StudentLayout, TeacherLayout } from "@pages";
+import { AdminLayout, Groups, LoginProtected, NotFound, SignIn, SignUp, StudentLayout, TeacherLayout } from "@pages";
+import {LayoutProtected} from '@pages'
+import Courses from "../pages/courses/courses";
 
 
 const Router = () => {
     const router = createBrowserRouter(
         createRoutesFromElements(
             <Route path="/" element={ <App/> }>
-                <Route index element={ < SignIn/> }/>
+                <Route index element={<LoginProtected>< SignIn /></LoginProtected> }/>
                 <Route path="/sign-up" element={ <SignUp/> }/>
                 {/* ADMIN LAYOUT */}
-                <Route path="/admin" element={ <AdminLayout/> }>
-                    <Route index element={ <Groups/> } />
-
+                <Route path="/admin" element={<LayoutProtected><AdminLayout/></LayoutProtected> }>
+                    <Route index path="groups" element={ <Groups/> } />
+                    <Route path="courses" element={ <Courses/> } />
+                    <Route path="students" element={ <Groups/> } />
+                    <Route path="teachers" element={ <Groups/> } />
                 </Route>
-                {/* TEACHER LAYOUT */}
                 <Route path="/teacher" element={ <TeacherLayout/> }>
-
+                
                 </Route>
-                {/* STUDENT LAYOUT */}
                 <Route path="/student" element={ <StudentLayout/> }>
 
                 </Route>

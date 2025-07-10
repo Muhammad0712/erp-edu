@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { groupsService } from "../service"
-import type { Group } from "../types/group";
+import { groupsService } from "@service/groups.service"
+import type { Group } from "@types";
 
 
 
@@ -13,38 +13,42 @@ const useGroup = () => {
 
     const useGroupCreate = () => {
         return useMutation({
-            mutationFn: async(data: Group)=> groupsService.createGroup(data),
-            onSuccess: ()=> {
-                queryClient.invalidateQueries({queryKey: ['groups']})
+            mutationFn: async (data: Group) => groupsService.createGroup(data),
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['groups'] })
             }
         })
     }
 
     const useGroupUpdate = () => {
         return useMutation({
-            mutationFn: async(data: Group)=> groupsService.updateGroup(data),
-            onSuccess: ()=> {
-                queryClient.invalidateQueries({queryKey: ['groups']})
+            mutationFn: async ({ data, id }: { data: Group, id: number }) => {
+                groupsService.updateGroup(data, id)
+            },
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['groups'] })
             }
         })
     }
 
     const useGroupDelete = () => {
         return useMutation({
-            mutationFn: async(id: number)=> groupsService.deleteGroupById(id) ,
-            onSuccess: ()=> {
+            mutationFn: async (data: Group) => groupsService.deleteGroupById(data),
+            onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['groups'] })
             }
         })
-        
+
     }
 
     return {
-        data, 
+        data,
         useGroupCreate,
         useGroupUpdate,
         useGroupDelete
     }
 }
 
-export default useGroup
+export {
+    useGroup
+}
