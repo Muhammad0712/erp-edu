@@ -1,21 +1,39 @@
-import { Table, type PaginationProps } from 'antd'
-import React, { useState } from 'react'
-import { useCourses } from '@hooks/useCourses';
+import { Button, Space, Table, type PaginationProps } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { useCourses } from '@hooks';
 import CourseModal from './modals/course.modal';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { CourseColumns } from '@components';
+import { useLocation } from 'react-router-dom';
 
 const Courses = () => {
-  const { data, useCoursesDelete } = useCourses()
-  const {mutate: deleteFn} = useCoursesDelete()
-  const courses = data?.data.courses;
+  const [params, setParams] = useState({
+    page: 1,
+    limit: 10
+  });
+  const location = useLocation();
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const page = searchParams.get('page');
+    const limit = searchParams.get('limit');
+    if (page && limit) {
+      setParams(() => ({
+        page: Number(page),
+        limit: Number(limit)
+      }))
+    }
+  }, [location.search]);
 
-  // PAGINATION
-  const [current, setCurrent] = useState(1);
-  const pageSize = 6;
-  const paginatedData = (courses ?? []).slice((current - 1) * pageSize, current * pageSize);
-  const onChange: PaginationProps['onChange'] = (page) => {
-    console.log('Sahifa:', page);
-    setCurrent(page);
-  };
+  const { data, useCoursesDelete } = useCourses(params)
+  const { mutate: deleteFn } = useCoursesDelete()
+  const courses = data?.data.courses;
+  
+  const handlePagination = (page: number, limit: number) => {
+    setParams(() => ({
+      page: page,
+      limit: limit
+    }))
+  }
 
   const handleDelete = async (res: any) => {
     deleteFn(res, {
@@ -23,44 +41,25 @@ const Courses = () => {
     })
   }
 
+  const [open, setOpen] = useState(false);
+
+  const showModal = () => {
+    setOpen(true);
+  };
   const columns = [
-    {
-      title: 'Title',
-      dataIndex: 'title',
-      key: 'title',
-    },
-    {
-      title: 'Price',
-      dataIndex: 'price',
-      key: 'price',
-    },
-    {
-      title: 'Duration',
-      dataIndex: 'duration',
-      key: 'duration',
-    },
-    {
-      title: 'Lessons in a week',
-      dataIndex: 'lessons_in_a_week',
-      key: 'lessons_in_a_week',
-    },
-    {
-      title: 'Lesson_duration',
-      dataIndex: 'lesson_duration',
-      key: 'lesson_duration',
-    },
+    ...(CourseColumns ?? []),
     {
       title: 'Actions',
       key: 'actions',
-      render: (res: any) => (
-        <div className="flex gap-2">
-          <button
-            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 w-[60px] h-[30px]"
-            onClick={() => handleDelete(res)}
-          >
-            Delete
-          </button>
-        </div>
+      render: (_:any, record: any) => (
+        <Space>
+          <Button type="primary" onClick={() => showModal()}>
+            <EditOutlined />
+          </Button>
+          <Button type="primary" danger onClick={() => handleDelete(record)}>
+            <DeleteOutlined />
+          </Button>
+        </Space>
       ),
     },
   ];
@@ -69,22 +68,27 @@ const Courses = () => {
     <div className="w-[100%] flex flex-col items-center">
       <div className="w-[100%] h-[40px] flex items-center justify-between">
         <h1 className="text-2xl font-bold">Courses</h1>
-        {<CourseModal/>}
+        <Button type="primary"
+          className="!border-2 !text-white !w-[120px] !h-[40px] !flex !items-center !justify-center !rounded-md"
+          onClick={showModal}
+        >
+          + Add Course
+        </Button>
       </div>
       <Table
-        dataSource={paginatedData}
+        dataSource={courses}
         rowKey='id'
         columns={columns}
-        pagination={{
-          current,
-          pageSize,
-          total: courses?.length ?? 0,
-          onChange,
-        }}
+        pagination={false}
+        onChange={(pagination: PaginationProps) => handlePagination(pagination.current!, pagination.pageSize!)}
         style={{
           width: "100%",
           marginTop: '10px'
         }}
+      />
+      <CourseModal
+        setOpen={setOpen}
+        open={open}
       />
     </div>
   )

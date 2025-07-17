@@ -80,7 +80,7 @@ const AdminLayout: React.FC = () => {
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" defaultSelectedKeys={[location.pathname]} mode="inline" items={items} onClick={handleMenuClick}/>
+        <Menu theme="dark" selectedKeys={[location.pathname.split('/')[2]]} mode="inline" items={items} onClick={handleMenuClick}/>
       </Sider>
       <Layout>
         <Header style={{ 

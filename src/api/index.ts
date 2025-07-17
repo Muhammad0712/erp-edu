@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getItem } from "../helpers";
+import { clearStorage, getItem } from "@helpers";
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL
@@ -11,6 +11,17 @@ axiosInstance.interceptors.request.use((config)=> {
         config.headers['Authorization'] = `Bearer ${access_token}`
     }
     return config;
-})
+});
+
+axiosInstance.interceptors.response.use(
+    (response) => response, // Pass through successful responses
+    async (error) => {
+        if (error.response && error.response.status === 401) {
+            window.location.href = "/";
+            clearStorage();
+        }
+        return Promise.reject(error); // Reject other errors
+    }
+);
 
 export default axiosInstance

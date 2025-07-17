@@ -4,7 +4,7 @@ export interface Course{
     description: string;
     price: number;
     duration: string;
-    lesson_in_a_week: number;
+    lessons_in_a_week: number;
     lesson_duration: string;
 };
 

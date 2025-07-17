@@ -4,7 +4,7 @@ import { Notification } from "@helpers";
 export function apiConfig() {
     async function getRequest(url: string, params: object = {}) {
         try {
-            const res = await axiosInstance.get(url, { params })
+            const res = await axiosInstance.get(url, { params });
             return res
         } catch (error: any) {
             console.log(error?.response?.data);
@@ -15,6 +15,10 @@ export function apiConfig() {
     async function postRequest(url: string, body: object = {}) {
         try {
             const res = await axiosInstance.post(url, body);
+            if (res.status === 201 || res.status === 200) {
+                Notification('success', res.data.message)
+                return res
+            }
             return res;
         } catch (error: any) {
             console.log(error?.response?.data);
@@ -25,6 +29,10 @@ export function apiConfig() {
     async function putRequest(url: string, body: object = {}) {
         try {
             const res = await axiosInstance.put(url, body);
+            if (res.status === 200) {
+                Notification('success', res.data.message)
+                return res
+            }
             return res;
         } catch (error: any) {
             console.log(error?.response?.data);
@@ -35,6 +43,10 @@ export function apiConfig() {
     async function patchRequest(url: string, body: object = {}) {
         try {
             const res = await axiosInstance.patch(url, body);
+            if (res.status === 200) {
+                Notification('success', res.data.message)
+                return res
+            }
             return res;
         } catch (error: any) {
             console.log(error?.response?.data);
@@ -45,6 +57,10 @@ export function apiConfig() {
     async function deleteRequest(url: string, params: object = {}) {
         try {
             const res = await axiosInstance.delete(url, { params });
+            if (res.status === 200) {
+                Notification('success', res.data.message)
+                return res
+            }
             return res;
         } catch (error: any) {
             console.log(error?.response?.data);
