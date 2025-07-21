@@ -8,10 +8,13 @@ import {
     SignIn,
     SignUp,
     SingleGroup,
-    StudentLayout,
-    TeacherLayout
+    Students,
+    TeacherLayout,
+    LayoutProtected,
+    Courses,
+    Teachers,
+    Branches
 } from "@pages";
-import { LayoutProtected, Courses } from '@pages';
 
 const Router = () => {
     const router = createBrowserRouter(
@@ -22,21 +25,22 @@ const Router = () => {
 
                 {/* ADMIN LAYOUT */}
                 <Route path="/admin" element={<LayoutProtected><AdminLayout /></LayoutProtected>}>
-                    <Route index path="groups" element={<Groups />} />
+                    <Route index element={<Groups />} path="groups" />
                     <Route path="groups/:id" element={<SingleGroup />} />
                     <Route path="courses" element={<Courses />} />
-                    <Route path="students" element={<div>Students sahifa</div>} />
-                    <Route path="teachers" element={<div>Teachers sahifa</div>} />
+                    <Route path="students" element={<Students />} />
+                    <Route path="teachers" element={<Teachers/>} />
+                    <Route path="branches" element={<Branches/>} /> 
                 </Route>
 
                 {/* TEACHER LAYOUT */}
                 <Route path="/teacher" element={<TeacherLayout />}>
-                    <Route index element={<div>Teacher Dashboard</div>} />
+                    <Route element={<div>Teacher Dashboard</div>} />
                 </Route>
 
                 {/* STUDENT LAYOUT */}
-                <Route path="/student" element={<StudentLayout />}>
-                    <Route index element={<div>Student Dashboard</div>} />
+                <Route path="/students" element={<div>Students</div>}>
+                    <Route element={<div>Student Dashboard</div>} />
                 </Route>
 
                 {/* 404 PAGE */}

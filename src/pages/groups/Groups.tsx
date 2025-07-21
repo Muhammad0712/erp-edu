@@ -1,7 +1,7 @@
-import { Button, Space, Table, type TablePaginationConfig } from "antd";
+import { Button, Space, Table, Tooltip, type TablePaginationConfig } from "antd";
 import { PopConfirm, GroupColumns } from "@components";
 import { Link, useLocation } from "react-router-dom";
-import { EditOutlined, EyeOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, UsergroupAddOutlined } from "@ant-design/icons";
 import { useGroup, useGeneral } from "@hooks";
 import GroupModal from "./modals/group.modal";
 import { useEffect, useState } from "react";
@@ -10,7 +10,6 @@ import { type Group } from "@types";
 const Groups = () => {
   const [update, setUpdate] = useState<Group | null>(null);
   const [open, setOpen] = useState(false);
-  // const [popConfirm, setPopConfirm] = useState(false);
   const [params, setParams] = useState({
     page: 1,
     limit: 10
@@ -56,13 +55,19 @@ const Groups = () => {
       render: (_: any, record: Group) => (
         <>
           <Space size={"middle"}>
-            <Button type="primary" onClick={() => editItem(record)}>
-              <EditOutlined />
-            </Button>
-            {<PopConfirm handleDelete={() => deleteItem(record.id!)} loading={isDeleting} />}
-            <Link to={`/admin/groups/${record.id!}`}><EyeOutlined style={{
-              fontSize: "20px"
-            }} /></Link>
+            <Tooltip title="Edit" >
+              <Button type="primary" onClick={() => editItem(record)}>
+                <EditOutlined />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Delete" >
+              <PopConfirm handleDelete={() => deleteItem(record.id!)} loading={isDeleting} />
+            </Tooltip>
+            <Tooltip title="View" >
+              <Link to={`/admin/groups/${record.id!}`}><EyeOutlined style={{
+                fontSize: "20px"
+              }} /></Link>
+            </Tooltip>
           </Space>
         </>
       )
@@ -75,13 +80,14 @@ const Groups = () => {
       <div className="w-full flex flex-col gap-2">
         <div className="w-full h-[40px] flex  justify-between">
           <h1 className="text-2xl font-bold">Groups</h1>
-          <Button
-            type="primary"
-            className="!border-2 !text-white !w-[120px] !h-[40px] !flex !items-center !justify-center !rounded-md "
-            onClick={() => setOpen(true)}
-          >
-            + Add Group
-          </Button>
+          <Tooltip title="Add Group" >
+            <Button
+              type="primary"
+              onClick={() => setOpen(true)}
+              icon={<UsergroupAddOutlined />}
+            >
+            </Button>
+          </Tooltip>
         </div>
         <Table<Group>
           columns={columns}

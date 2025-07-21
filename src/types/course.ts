@@ -5,7 +5,7 @@ export interface Course{
     price: number;
     duration: string;
     lessons_in_a_week: number;
-    lesson_duration: string;
+    lesson_duration: number;
 };
 
 export type TypeCourse = {

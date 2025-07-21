@@ -1,4 +1,5 @@
-export * from './use-auth'
+export * from './useAuth'
 export * from './useGroups'
 export * from './useGeneral'
 export * from './useCourses'
+export * from './useTeachers'

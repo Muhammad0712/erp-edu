@@ -1,6 +1,6 @@
-import { apiConfig } from "@api/config"
-import { ApiUrls } from "@api/api-urls";
 import type { Group, ParamsType } from "@types";
+import { apiConfig } from "@api/config";
+import { ApiUrls } from "@api/api-urls";
 
 
 export const groupsService = {
@@ -20,7 +20,7 @@ export const groupsService = {
         const res = await apiConfig().patchRequest(`${ApiUrls.GROUPS}/${model.id}`, model)
         return res
     },
-    async deleteGroupById(id: number): Promise<any>{
+    async deleteGroup(id: number): Promise<any>{
         const res = await apiConfig().deleteRequest(`${ApiUrls.GROUPS}/${id}`)
         return res
     },

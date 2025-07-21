@@ -8,7 +8,7 @@ export const coursesService = {
         const res = await apiConfig().postRequest(`${ApiUrls.COURSES}`, payload)
         return res
     },
-    async getAllCourses(params: ParamsType) {
+    async getAllCourses(params?: ParamsType) {
         const res = await apiConfig().getRequest(ApiUrls.COURSES, params)
         return res
     },
@@ -20,8 +20,8 @@ export const coursesService = {
         const res = await apiConfig().patchRequest(`${ApiUrls.COURSES}/${model.id}`, model)
         return res
     },
-    async deleteCourse(model: Course): Promise<any> {
-        const res = await apiConfig().deleteRequest(`${ApiUrls.COURSES}/${model.id}`)
+    async deleteCourse(id: number): Promise<any> {
+        const res = await apiConfig().deleteRequest(`${ApiUrls.COURSES}/${id}`)
         return res
     }
 }

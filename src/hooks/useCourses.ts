@@ -4,7 +4,7 @@ import type { Course, ParamsType } from "@types";
 
 
 
-const useCourses = (params: ParamsType) => {
+const useCourses = (params?: ParamsType) => {
     const queryClient = useQueryClient()
     const { data } = useQuery({
         queryKey: ['courses', params],
@@ -33,7 +33,7 @@ const useCourses = (params: ParamsType) => {
 
     const useCoursesDelete = () => {
         return useMutation({
-            mutationFn: async (model: Course) => coursesService.deleteCourse(model),
+            mutationFn: async (id: number) => coursesService.deleteCourse(id),
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['courses'] })
             }

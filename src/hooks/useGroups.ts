@@ -3,7 +3,6 @@ import { groupsService } from "@service/groups.service"
 import type { Group, ParamsType } from "@types";
 
 
-
 export const useGroup = (params: ParamsType, id?: number) => {
     const queryClient = useQueryClient()
     const { data } = useQuery({
@@ -26,7 +25,6 @@ export const useGroup = (params: ParamsType, id?: number) => {
             }
         })
     }
-
     const useGroupUpdate = () => {
         return useMutation({
             mutationFn: async (data: Group) => {
@@ -39,7 +37,7 @@ export const useGroup = (params: ParamsType, id?: number) => {
     }
     const useGroupDelete = () => {
         return useMutation({
-            mutationFn: async (id: number) => groupsService.deleteGroupById(id),
+            mutationFn: async (id: number) => groupsService.deleteGroup(id),
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['groups'] })
             }

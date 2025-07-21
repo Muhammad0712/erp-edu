@@ -1,12 +1,15 @@
-import { Button, Space, Table, type PaginationProps } from 'antd'
+import { Button, Space, Table, type TablePaginationConfig } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { useCourses } from '@hooks';
+import { useCourses, useGeneral } from '@hooks';
 import CourseModal from './modals/course.modal';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { BookOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { CourseColumns } from '@components';
 import { useLocation } from 'react-router-dom';
+import type { Course } from '@types';
 
 const Courses = () => {
+  const [update, setUpdate] = useState<Course | null>(null);
+  const [open, setOpen] = useState(false);
   const [params, setParams] = useState({
     page: 1,
     limit: 10
@@ -25,41 +28,41 @@ const Courses = () => {
   }, [location.search]);
 
   const { data, useCoursesDelete } = useCourses(params)
-  const { mutate: deleteFn } = useCoursesDelete()
-  const courses = data?.data.courses;
-  
-  const handlePagination = (page: number, limit: number) => {
-    setParams(() => ({
-      page: page,
-      limit: limit
-    }))
+  const { handlePagination } = useGeneral();
+  const { mutate: deleteFn, isPending: isDeleting } = useCoursesDelete()
+  const deleteItem = async (id: number) => {
+    console.log(id);
+    deleteFn(id);
   }
-
-  const handleDelete = async (res: any) => {
-    deleteFn(res, {
-      onSuccess: () => { }
-    })
-  }
-
-  const [open, setOpen] = useState(false);
-
-  const showModal = () => {
+  const editItem = (record: Course) => {
+    setUpdate(record);
     setOpen(true);
-  };
+  }
+  const toggle = () => {
+    setOpen(!open);
+    if (update) {
+      setUpdate(null)
+    }
+  }
+  const handleTableChange = (pagination: TablePaginationConfig) => {
+    handlePagination({ pagination, setParams })
+  }
   const columns = [
     ...(CourseColumns ?? []),
     {
       title: 'Actions',
       key: 'actions',
-      render: (_:any, record: any) => (
-        <Space>
-          <Button type="primary" onClick={() => showModal()}>
-            <EditOutlined />
-          </Button>
-          <Button type="primary" danger onClick={() => handleDelete(record)}>
-            <DeleteOutlined />
-          </Button>
-        </Space>
+      render: (_:any, record: Course) => (
+        <>
+          <Space>
+            <Button type="primary" onClick={() => editItem(record)}>
+              <EditOutlined />
+            </Button>
+            <Button type="primary" danger onClick={() => deleteItem(record.id!)} loading={isDeleting}>
+              <DeleteOutlined />
+            </Button>
+          </Space>
+        </>
       ),
     },
   ];
@@ -69,27 +72,38 @@ const Courses = () => {
       <div className="w-[100%] h-[40px] flex items-center justify-between">
         <h1 className="text-2xl font-bold">Courses</h1>
         <Button type="primary"
-          className="!border-2 !text-white !w-[120px] !h-[40px] !flex !items-center !justify-center !rounded-md"
-          onClick={showModal}
+          onClick={() => setOpen(true)}
         >
-          + Add Course
+          +<BookOutlined />
         </Button>
       </div>
       <Table
-        dataSource={courses}
-        rowKey='id'
         columns={columns}
-        pagination={false}
-        onChange={(pagination: PaginationProps) => handlePagination(pagination.current!, pagination.pageSize!)}
+        dataSource={data?.data.courses}
+        rowKey={(row)=> row.id!}
+        pagination={{
+          current: params.page,
+          pageSize: params.limit,
+          total: data?.data.total,
+          showSizeChanger: true,
+          pageSizeOptions: ["4", "5", "6", "7", "10"],
+        }}
+        onRow={(record) => {
+          return {
+            title: record.description,
+          };
+        }}
+        onChange={handleTableChange}
         style={{
           width: "100%",
           marginTop: '10px'
         }}
       />
-      <CourseModal
-        setOpen={setOpen}
+      {open && <CourseModal
         open={open}
-      />
+        toggle={toggle}
+        update={update}
+      />}
     </div>
   )
 }

@@ -35,7 +35,7 @@ const SignIn = () => {
       <div className="w-[100%] h-[100vh] flex items-center justify-center">
         <form className="w-[400px] h-[400px] flex flex-col justify-evenly items-center opacity-60 rounded-2xl transition-all hover:shadow-[15px_15px_30px_gray] shadow-[5px_5px_15px_gray] bg-gray-100"> 
             <h1 className="text-3xl font-bold text-black">Sign In</h1>
-            <Input size="large" placeholder="large size" prefix={<UserOutlined />} 
+            <Input size="large" placeholder="Email. . ." prefix={<UserOutlined />} 
               style={{
                 width: 310
               }}
@@ -44,7 +44,7 @@ const SignIn = () => {
             />
             <Space direction="horizontal">
               <Input.Password
-                placeholder="input password"
+                placeholder="Password. . ."
                 size="large"
                 visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
                 value={password}

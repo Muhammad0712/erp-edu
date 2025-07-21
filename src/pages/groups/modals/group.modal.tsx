@@ -19,7 +19,6 @@ interface GroupProps extends ModalProps {
 const GroupModal = ({ open, toggle, update }: GroupProps) => {
   const { data } = useCourses({ page: 1, limit: 10 });
   const { useGroupCreate, useGroupUpdate } = useGroup({ page: 1, limit: 10 });
-
   const createGroup = useGroupCreate();
   const updateGroupMutation = useGroupUpdate();
 
@@ -105,10 +104,11 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
             name="name"
             control={control}
             render={({ field }) => (
-              <Input {...field} status={errors.name ? "error" : ""} placeholder="Grup nomi" id="name" autoComplete="off"/>
+              <Input {...field} status={errors.name ? "error" : ""} placeholder="Group name" id="name" autoComplete="off"/>
             )}
           />
         </Form.Item>
+        {/*SHU YERGA KELDIM  */}
         <Form.Item
           label="Course"
           name="course_id"
@@ -119,7 +119,7 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
           <Controller
             name="course_id"
             control={control}
-            render={({ field }) => (
+            render={({ field }) => (  
               <Select
                 id="course_id"
                 {...field}

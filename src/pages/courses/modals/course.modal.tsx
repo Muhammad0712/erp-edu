@@ -1,151 +1,177 @@
 import { Form, Input, Modal } from 'antd';
-import { useState } from 'react';
-import type { Course } from '@types';
+import { useEffect } from 'react';
+import type { Course, ModalProps } from '@types';
 import { useCourses } from '@hooks';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { courseFormSchema } from '@utils';
+import { Controller, useForm } from 'react-hook-form';
 
-interface Props{
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    open: boolean;
-    resData?: Course
+interface CourseProps extends ModalProps {
+    update: Course | null;
 }
 
-const CourseModal = ({ setOpen, open, resData }: Props) => {
-    console.log('Course Modal');
-    const [params, setParams] = useState({
-        page: 1,
-        limit: 10
-    });
-    const { useCoursesCreate} = useCourses(params);
+const CourseModal = ({ open, toggle, update, }: CourseProps) => {
+    const { useCoursesCreate } = useCourses();
     const { mutate: createFn } = useCoursesCreate();
-
-
-
-    // --------------------STATES--------------------
-    const [form, setForm] = useState<Course>({
-        title: resData?.title || '',
-        description: resData?.description || '',
-        price: resData?.price || 0,
-        duration: resData?.duration || '',
-        lessons_in_a_week: resData?.lessons_in_a_week || 0,
-        lesson_duration: resData?.lesson_duration || '',
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+        setValue,
+        reset
+    } = useForm({
+        resolver: yupResolver(courseFormSchema),
+        defaultValues: {
+            title: '',
+            description: '',
+            price: 0,
+            duration: '',
+            lessons_in_a_week: 0,
+            lesson_duration: 0
+        }
     })
-    const layout = {
-        labelCol: { span: 14 },
-        wrapperCol: { span: 40 },
-    };
-    const validateMessages = {
-        required: '${label} is required!',
-        types: {
-            email: '${label} is not a valid email!',
-            number: '${label} is not a valid number!',
-        },
-        number: {
-            range: '${label} must be between ${min} and ${max}',
-        },
-    };
-    const onFinish = (values: any) => {
-        console.log(values);
-    };
-    // ----------------------------------------------
 
-    const handleOk = async (e: React.MouseEvent<HTMLElement>) => {
-        e.preventDefault()
-        const payload = {
-            title: form.title,
-            description: form.description,
-            price: form.price,
-            duration: form.duration,
-            lessons_in_a_week: form.lessons_in_a_week,
-            lesson_duration: form.lesson_duration
-        };
-        createFn(payload, {
-            onSuccess: () => { }
-        })
-        setOpen(false);
+    useEffect(() => {
+        if (update?.id) {
+            setValue('title', update.title);
+            setValue('description', update.description);
+            setValue('price', update.price);
+            setValue('duration', update.duration);
+            setValue('lessons_in_a_week', update.lessons_in_a_week);
+            setValue('lesson_duration', update.lesson_duration);
+        } else {
+            reset();
+        }
+    }, [update, setValue, reset]);
+
+    const onSubmit = (data: any) => {
+        if (update?.id) {
+            createFn(data, {
+                onSuccess: () => {
+                    toggle();
+                    reset();
+                }
+            });
+        } else {
+            createFn(data, {
+                onSuccess: () => {
+                    toggle();
+                    reset();
+                }
+            });
+        }
     };
 
-    const handleCancel = async () => {
-        setOpen(false);
-    };
 
     return (
         <>
-
             <Modal
-                title="Add Course"
-                onOk={handleOk}
-                onCancel={handleCancel}
+                title={update?.id ? "Update Course" : "Add Course"}
+                centered
                 open={open}
+                onCancel={() => {
+                    toggle()
+                    reset();
+                }}
+                width={500}
+                closeIcon
+                footer={null}
             >
                 <Form
-                    {...layout}
-                    name="nest-messages"
-                    onFinish={onFinish}
-                    style={{
-                        width: '90%',
-                        height: '100%',
-                        display: 'flex',
-                        justifyContent: `center`,
-                    }}
-                    validateMessages={validateMessages}
+                    layout='vertical'
+                    autoComplete='on'
+                    onFinish={handleSubmit(onSubmit)}
                 >
-                    <div className="w-[70%] h-[100%] flex flex-col items-end">
-                        <Form.Item className='flex justify-between w-[350px]' label="Title" rules={[{ required: true }]}>
-                            <Input
-                                style={{
-                                    width: '205px',
-                                }}
-                                value={form.title}
-                                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                            />
-                        </Form.Item>
-                        <Form.Item className='flex justify-between w-[350px] ' label="Price" rules={[{ type: 'number', min: 0 }]}>
-                            <Input
-                                style={{
-                                    width: '204px',
-                                }}
-                                value={form.price}
-                                onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-                            />
-                        </Form.Item>
-                        <Form.Item className='flex justify-between w-[350px]' label="Duration" rules={[{ type: 'string' }]}>
-                            <Input
-                                style={{
-                                    width: '195px',
-                                }}
-                                value={form.duration}
-                                onChange={(e) => setForm({ ...form, duration: e.target.value })}
-                            />
-                        </Form.Item>
-                        <Form.Item className='flex justify-between w-[350px]' label="Lessons in a week">
-                            <Input
-                                style={{
-                                    width: '175px'
-                                }}
-                                value={form.lessons_in_a_week}
-                                onChange={(e) => setForm({ ...form, lessons_in_a_week: Number(e.target.value) })}
-                            />
-                        </Form.Item>
-                        <Form.Item className='flex justify-between w-[350px]' label="Lesson duration">
-                            <Input
-                                style={{
-                                    width: '179px'
-                                }}
-                                value={form.lesson_duration}
-                                onChange={(e) => setForm({ ...form, lesson_duration: e.target.value })}
-                            />
-                        </Form.Item>
-                        <Form.Item className='flex justify-between w-[350px]' label="Description">
-                            <Input.TextArea
-                                style={{
-                                    width: '265px',
-                                    height: '100px'
-                                }}
-                                value={form.description}
-                                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                            />
-                        </Form.Item>
-                    </div>
+                    <Form.Item 
+                        label="Title"
+                        name="title"
+                        validateStatus={errors.title ? 'error': ""}    
+                        help={errors.title ? errors.title.message : ""}
+                        htmlFor='title'
+                    >
+                        <Controller
+                            name='title'
+                            control={control}
+                            render={({ field }) => (
+                                <Input {...field} status={errors.title ? 'error': ""} placeholder='Title' id='title' autoComplete='off'/>
+                            )}
+                        />
+                    </Form.Item>
+                    <Form.Item 
+                        label="Price"
+                        name="price"
+                        validateStatus={errors.price ? 'error': ""}    
+                        help={errors.price ? errors.price.message : ""}
+                        htmlFor='price'
+                    >
+                        <Controller
+                            name='price'
+                            control={control}
+                            render={({ field }) => (
+                                <Input {...field} status={errors.price ? 'error': ""} placeholder='Price' id='price' autoComplete='off'/>
+                            )}
+                        />
+                    </Form.Item>
+                    <Form.Item 
+                        label="Duration"
+                        name="duration"
+                        validateStatus={errors.duration ? 'error': ""}
+                        help={errors.duration ? errors.duration.message : ""}
+                        htmlFor='duration'
+                        >
+                        <Controller 
+                            name='duration'
+                            control={control}
+                            render={({ field }) => (
+                                <Input {...field} status={errors.duration ? 'error': ""} placeholder='Duration' id='duration' autoComplete='off'/>
+                            )}
+                        />
+                            
+                    </Form.Item>
+                    <Form.Item 
+                        label="lessons_in_a_week"
+                        name="lessons_in_a_week"
+                        validateStatus={errors.lessons_in_a_week ? 'error': ""}
+                        help={errors.lessons_in_a_week ? errors.lessons_in_a_week.message : ""}
+                        >
+                        <Controller
+                            name='lessons_in_a_week'
+                            control={control}
+                            render={({ field }) => (
+                                <Input {...field} status={errors.lessons_in_a_week ? 'error': ""} placeholder='Lessons in a week' id='lessons_in_a_week' autoComplete='off'/>
+                            )}
+                        />
+                        {/*SHU YERGA KELDIM  */}
+                    </Form.Item>
+                    <Form.Item 
+                        label="lesson_duration"
+                        name="lesson_duration"
+                        validateStatus={errors.lesson_duration ? 'error': ""}
+                        help={errors.lesson_duration ? errors.lesson_duration.message : ""}
+                        >
+                        <Controller
+                            name='lesson_duration'
+                            control={control}
+                            render={({ field }) => (
+                                <Input {...field} status={errors.lesson_duration ? 'error': ""} placeholder='Lesson duration' id='lesson_duration' autoComplete='off'/>
+                            )}
+                        />  
+                    </Form.Item>
+                    <Form.Item
+                        label="Description"
+                        name="description"
+                        validateStatus={errors.description ? 'error': ""}
+                        help={errors.description ? errors.description.message : ""}
+                        htmlFor='description'
+                    >
+                        <Controller
+                            name='description'
+                            control={control}
+                            render={({ field }) => (
+                                <Input.TextArea {...field} status={errors.description ? 'error': ""} placeholder='Description' id='description' autoComplete='off'/>
+                            )}
+                        />
+                    </Form.Item>
                 </Form>
             </Modal>
         </>
