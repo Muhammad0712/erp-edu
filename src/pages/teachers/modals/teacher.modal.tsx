@@ -1,10 +1,10 @@
 import type { ModalProps, TeacherType } from '@types'
 import { useTeachers } from '@hooks'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { teacherFormSchema } from '@utils'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect } from 'react'
-import { Form, Modal } from 'antd'
+import { Form, Input, Modal } from 'antd'
 
 interface TeacherProps extends ModalProps {
     update: TeacherType | null
@@ -83,7 +83,22 @@ const TeacherModal = ({open, toggle, update}: TeacherProps) => {
                 autoComplete='on'
                 onFinish={handleSubmit(onSubmit)}
             >
-                
+                <Form.Item
+                    label='First Name'
+                    name='first_name'
+                    validateStatus={errors.first_name ?'error' : ""}
+                    help={errors.first_name? errors.first_name.message : ""}
+                    htmlFor='first_name'
+                >
+                    <Controller
+                        name='first_name'
+                        control={control}
+                        render={({ field }) => {
+                            return <Input {...field} status={errors.first_name ?'error' : ""} placeholder='First Name' id='first_name' autoComplete='off'/>
+                        }}
+                    
+                    />
+                </Form.Item>
             </Form>
         </Modal>
     </>
