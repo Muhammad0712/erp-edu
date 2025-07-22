@@ -16,38 +16,41 @@ import {
     SignUp,
     Rooms
 } from "@pages";
+import { Suspense } from "react";
 
 const Router = () => {
     const router = createBrowserRouter(
         createRoutesFromElements(
-            <Route path="/" element={<App />}>
-                <Route index element={<LoginProtected><SignIn /></LoginProtected>} />
-                <Route path="/sign-up" element={<SignUp />} />
+            <Suspense fallback={<div>Yuklanmoqda...</div>}>
+                <Route path="/" element={<App />}>
+                    <Route index element={<LoginProtected><SignIn /></LoginProtected>} />
+                    <Route path="/sign-up" element={<SignUp />} />
 
-                {/* ADMIN LAYOUT */}
-                <Route path="/admin" element={<LayoutProtected><AdminLayout /></LayoutProtected>}>
-                    <Route index element={<Groups />} />
-                    <Route path="groups/:id" element={<SingleGroup />} />
-                    <Route path="courses" element={<Courses />} />
-                    <Route path="students" element={<Students />} />
-                    <Route path="teachers" element={<Teachers/>} />
-                    <Route path="branches" element={<Branches/>} /> 
-                    <Route path="rooms" element={<Rooms/>} />
+                    {/* ADMIN LAYOUT */}
+                    <Route path="/admin" element={<LayoutProtected><AdminLayout /></LayoutProtected>}>
+                        <Route index element={<Groups />} />
+                        <Route path="groups/:id" element={<SingleGroup />} />
+                        <Route path="courses" element={<Courses />} />
+                        <Route path="students" element={<Students />} />
+                        <Route path="teachers" element={<Teachers/>} />
+                        <Route path="branches" element={<Branches/>} /> 
+                        <Route path="rooms" element={<Rooms/>} />
+                    </Route>
+
+                    {/* TEACHER LAYOUT */}
+                    <Route path="/teacher" element={<TeacherLayout />}>
+                        <Route element={<div>Teacher Dashboard</div>} />
+                    </Route>
+
+                    {/* STUDENT LAYOUT */}
+                    <Route path="/students" element={<div>Students</div>}>
+                        <Route element={<div>Student Dashboard</div>} />
+                    </Route>
+
+                    {/* 404 PAGE */}
+                    <Route path="*" element={<NotFound />} />
                 </Route>
-
-                {/* TEACHER LAYOUT */}
-                <Route path="/teacher" element={<TeacherLayout />}>
-                    <Route element={<div>Teacher Dashboard</div>} />
-                </Route>
-
-                {/* STUDENT LAYOUT */}
-                <Route path="/students" element={<div>Students</div>}>
-                    <Route element={<div>Student Dashboard</div>} />
-                </Route>
-
-                {/* 404 PAGE */}
-                <Route path="*" element={<NotFound />} />
-            </Route>
+            </Suspense>
         )
     );
 

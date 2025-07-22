@@ -1,19 +1,19 @@
 import { lazy } from "react";
 
-const LayoutProtected = lazy(() => import('./protected-routes/admin-layout-protected.tsx'))
-const LoginProtected = lazy(() => import('./protected-routes/login-protected.tsx'))
-const TeacherLayout = lazy(() => import('./teacher-layout/teacher-layout.tsx'))
-const AdminLayout = lazy(() => import('./admin-layout/admin-layout.tsx'))
-const SingleGroup = lazy(() => import('./groups/single-group.tsx'))
-const NotFound = lazy(() => import('./not-found/not-found.tsx'));
-const Students = lazy(() => import('./students/students.tsx'))
-const Branches = lazy(() => import('./branches/branches.tsx'))
-const Teachers = lazy(() => import('./teachers/teachers.tsx'))
-const Courses = lazy(() => import('./courses/courses.tsx'))
-const Groups = lazy(() => import('./groups/groups.tsx'))
-const SignIn = lazy(() => import('./auth/sign-in.tsx'))
-const SignUp = lazy(() => import('./auth/sign-up.tsx'))
-const Rooms = lazy(() => import('./rooms/rooms.tsx'));
+const LayoutProtected = lazy(() => import('./protected-routes/admin-layout-protected'))
+const LoginProtected = lazy(() => import('./protected-routes/login-protected'))
+const TeacherLayout = lazy(() => import('./teacher-layout/teacher-layout'))
+const AdminLayout = lazy(() => import('./admin-layout/admin-layout'))
+const SingleGroup = lazy(() => import('./groups/single-group'))
+const NotFound = lazy(() => import('./not-found/not-found'));
+const Students = lazy(() => import('./students/students'))
+const Branches = lazy(() => import('./branches/branches'))
+const Teachers = lazy(() => import('./teachers/teachers'))
+const Courses = lazy(() => import('./courses/courses'))
+const Groups = lazy(() => import('./groups/groups'));
+const SignIn = lazy(() => import('./auth/sign-in'))
+const SignUp = lazy(() => import('./auth/sign-up'))
+const Rooms = lazy(() => import('./rooms/rooms'));
 
 export {
     LayoutProtected,
