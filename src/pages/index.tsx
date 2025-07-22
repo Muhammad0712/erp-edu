@@ -9,7 +9,7 @@ const NotFound = lazy(() => import('./not-found/not-found.tsx'));
 const Students = lazy(() => import('./students/students.tsx'))
 const Branches = lazy(() => import('./branches/branches.tsx'))
 const Teachers = lazy(() => import('./teachers/teachers.tsx'))
-const Courses = lazy(() => import('./courses/courses'))
+const Courses = lazy(() => import('./courses/courses.tsx'))
 const Groups = lazy(() => import('./groups/groups.tsx'))
 const SignIn = lazy(() => import('./auth/sign-in.tsx'))
 const SignUp = lazy(() => import('./auth/sign-up.tsx'))
