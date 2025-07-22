@@ -5,7 +5,7 @@ import { useGeneral, useGroup } from '@hooks';
 import { useParams } from 'react-router-dom';
 import type { StudentsType } from '@types';
 import { useState } from 'react';
-import { LessonsList } from "@components";
+// import { LessonsList } from "@components";
 
 
 const SingleGroup = () => {
@@ -15,6 +15,9 @@ const SingleGroup = () => {
     page: 1,
     limit: 10
   });
+  console.log(open, 'open');
+  console.log(update, 'update');
+  
   const { id } = useParams();
 
   const { students } = useGroup(params, +id!);
