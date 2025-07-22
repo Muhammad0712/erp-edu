@@ -170,13 +170,13 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
             render={({ field }) => (
               <Select
                 {...field}
-                placeholder="Status tanlang"
+                placeholder="Select a status"
                 status={errors.status ? "error" : ""}
                 id="status"
                 options={[
-                  { value: "active", label: "Faol" },
-                  { value: "new", label: "Yangi" },
-                  { value: "completed", label: "Tugatilgan" },
+                  { value: "active", label: "Active" },
+                  { value: "new", label: "New" },
+                  { value: "completed", label: "Completed" },
                 ]}
               />
             )}

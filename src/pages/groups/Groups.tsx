@@ -1,7 +1,7 @@
+import { EditOutlined, EyeOutlined, UsergroupAddOutlined } from "@ant-design/icons";
 import { Button, Space, Table, Tooltip, type TablePaginationConfig } from "antd";
 import { PopConfirm, GroupColumns } from "@components";
 import { Link, useLocation } from "react-router-dom";
-import { EditOutlined, EyeOutlined, UsergroupAddOutlined } from "@ant-design/icons";
 import { useGroup, useGeneral } from "@hooks";
 import GroupModal from "./modals/group.modal";
 import { useEffect, useState } from "react";

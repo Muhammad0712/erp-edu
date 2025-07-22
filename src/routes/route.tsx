@@ -1,19 +1,20 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
 import App from "../App";
 import {
-    AdminLayout,
-    Groups,
+    LayoutProtected,
     LoginProtected,
-    NotFound,
-    SignIn,
-    SignUp,
+    TeacherLayout,
+    AdminLayout,
     SingleGroup,
     Students,
-    TeacherLayout,
-    LayoutProtected,
-    Courses,
+    NotFound,
     Teachers,
-    Branches
+    Branches,
+    Courses,
+    Groups,
+    SignIn,
+    SignUp,
+    Rooms
 } from "@pages";
 
 const Router = () => {
@@ -25,12 +26,13 @@ const Router = () => {
 
                 {/* ADMIN LAYOUT */}
                 <Route path="/admin" element={<LayoutProtected><AdminLayout /></LayoutProtected>}>
-                    <Route index element={<Groups />} path="groups" />
+                    <Route index element={<Groups />} />
                     <Route path="groups/:id" element={<SingleGroup />} />
                     <Route path="courses" element={<Courses />} />
                     <Route path="students" element={<Students />} />
                     <Route path="teachers" element={<Teachers/>} />
                     <Route path="branches" element={<Branches/>} /> 
+                    <Route path="rooms" element={<Rooms/>} />
                 </Route>
 
                 {/* TEACHER LAYOUT */}

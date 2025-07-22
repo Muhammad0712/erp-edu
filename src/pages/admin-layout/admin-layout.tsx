@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BookOutlined,
+  CodepenOutlined,
   ContactsOutlined,
   JavaScriptOutlined,
   ReadOutlined,
@@ -31,14 +32,25 @@ function getInfo(
 }
 
 const items: MenuItem[] = [
-  getInfo('Groups', 'groups', <TeamOutlined />),
+  getInfo('Groups', 'admin', <TeamOutlined />),
   getInfo('Courses', 'courses', <JavaScriptOutlined />),
   getInfo('Teachers', 'teachers', <ReadOutlined />),
   getInfo('Students', 'students', <BookOutlined />),
   getInfo('Branches', 'branches', <ContactsOutlined   />),
+  getInfo('Rooms', 'rooms', <CodepenOutlined />),
 ];
 
-const AdminLayout: React.FC = () => {
+const AdminLayout = () => {
+
+  // Current time
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  // ---------------
+
+
   const location = useLocation()
   const navigate = useNavigate()
   const role = getItem('role')
@@ -53,8 +65,8 @@ const AdminLayout: React.FC = () => {
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     switch (e.key) {
-      case 'groups':
-        throwPage('groups')
+      case 'admin':
+        throwPage('')
         break;
       case 'courses':
         throwPage('courses')
@@ -68,7 +80,10 @@ const AdminLayout: React.FC = () => {
       case 'branches':
         throwPage('branches')
         break;
-    
+      case 'rooms':
+        throwPage('rooms')
+        break;
+        
       default:
         break;
     }
@@ -86,7 +101,7 @@ const AdminLayout: React.FC = () => {
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" selectedKeys={[location.pathname.split('/')[2]]} mode="inline" items={items} onClick={handleMenuClick}/>
+        <Menu theme="dark" selectedKeys={[location.pathname.split('/')[2] || location.pathname.split('/')[1]]} mode="inline" items={items} onClick={handleMenuClick}/>
       </Sider>
       <Layout>
         <Header style={{ 
@@ -98,9 +113,12 @@ const AdminLayout: React.FC = () => {
         }}
         >
           <h1 className="text-2xl font-bold">Admin Panel</h1>
-          <Tooltip title="Log out">
-            <img src={logOut} alt="log-out" className='w-[25px] h-[25px] cursor-pointer' onClick={handleLogOut} />
-          </Tooltip>
+          <div className="flex gap-2 items-center justify-between w-[150px]">
+            <h1 className="text-2xl font-bold">{time.toLocaleTimeString()}</h1>
+            <Tooltip title="Log out">
+              <img src={logOut} alt="log-out" className='w-[25px] h-[25px] cursor-pointer' onClick={handleLogOut} />
+            </Tooltip>
+          </div>
         </Header>
         <Content style={{ margin: '10px 10px' }}>
           <Outlet/>

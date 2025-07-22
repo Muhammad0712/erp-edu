@@ -5,6 +5,7 @@ import { useGeneral, useGroup } from '@hooks';
 import { useParams } from 'react-router-dom';
 import type { StudentsType } from '@types';
 import { useState } from 'react';
+import { LessonsList } from "@components";
 
 
 const SingleGroup = () => {
@@ -58,7 +59,14 @@ const SingleGroup = () => {
   ]
 
   return (
-    <>
+    <div className='w-[100%] flex flex-col h-[545px] gap-4'>
+      <div className="w-[100%] h-[200px] flex justify-between">
+        <div className="w-[59.5%] h-[100%] bg-white"></div>
+        <div className="w-[39.5%] h-[100%] bg-white"></div>
+      </div>
+        <div className="w-[100%] h-[100px] flex gap-[5px] bg-white overflow-x-scroll">
+          
+        </div>
       <Table
         columns={columns}
         dataSource={allStudents}
@@ -75,7 +83,7 @@ const SingleGroup = () => {
         }}
         onChange={handleTableChange}
       />
-    </>
+    </div>
   )
 }
 

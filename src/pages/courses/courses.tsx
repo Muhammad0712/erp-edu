@@ -1,10 +1,10 @@
-import { Button, Space, Table, type TablePaginationConfig } from 'antd'
-import React, { useEffect, useState } from 'react'
-import { useCourses, useGeneral } from '@hooks';
-import CourseModal from './modals/course.modal';
 import { BookOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { CourseColumns } from '@components';
+import { Button, Space, Table, type TablePaginationConfig } from 'antd';
+import CourseModal from './modals/course.modal';
+import { useCourses, useGeneral } from '@hooks';
 import { useLocation } from 'react-router-dom';
+import { CourseColumns } from '@components';
+import { useEffect, useState } from 'react';
 import type { Course } from '@types';
 
 const Courses = () => {
@@ -52,7 +52,7 @@ const Courses = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (_:any, record: Course) => (
+      render: (_: any, record: Course) => (
         <>
           <Space>
             <Button type="primary" onClick={() => editItem(record)}>
@@ -80,7 +80,7 @@ const Courses = () => {
       <Table
         columns={columns}
         dataSource={data?.data.courses}
-        rowKey={(row)=> row.id!}
+        rowKey={(row) => row.id!}
         pagination={{
           current: params.page,
           pageSize: params.limit,
