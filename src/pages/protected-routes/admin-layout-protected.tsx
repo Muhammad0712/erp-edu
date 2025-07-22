@@ -1,8 +1,8 @@
 import { getItem } from "@helpers"
 import { Navigate } from "react-router-dom";
-import type { Protect } from "@types";
+import type { ProtectedRoute } from "../../types";
 
-const LayoutProtected = ({children}: Protect) => {
+const LayoutProtected = ({children}: ProtectedRoute) => {
     const accessToken = getItem('access_token');
     if (!accessToken) {
         return <Navigate to='/' replace/>
