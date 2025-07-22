@@ -15,19 +15,19 @@ const SignIn = lazy(() => import('./auth/sign-in.tsx'))
 const SignUp = lazy(() => import('./auth/sign-up.tsx'))
 const Rooms = lazy(() => import('./rooms/rooms.tsx'));
 
-export { 
-    LayoutProtected, 
-    LoginProtected, 
-    TeacherLayout, 
-    AdminLayout, 
-    SingleGroup, 
-    Teachers, 
-    Students, 
-    NotFound, 
+export {
+    LayoutProtected,
+    LoginProtected,
+    TeacherLayout,
+    AdminLayout,
+    SingleGroup,
+    Teachers,
+    Students,
+    NotFound,
     Branches,
-    Courses, 
-    SignIn, 
-    SignUp, 
-    Groups, 
+    Courses,
+    SignIn,
+    SignUp,
+    Groups,
     Rooms
 }
