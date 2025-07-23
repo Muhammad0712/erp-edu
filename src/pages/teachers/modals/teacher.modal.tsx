@@ -2,7 +2,7 @@ import type { ModalProps, TeacherType } from '@types'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { teacherFormSchema } from '@utils'
-import { Form, Input, InputNumber, Modal, Select } from 'antd'
+import { Form, Input, InputNumber, Modal, Select,  } from 'antd'
 import { useTeachers } from '@hooks'
 import { useEffect } from 'react'
 import { Option } from 'antd/es/mentions'
@@ -12,8 +12,9 @@ interface TeacherProps extends ModalProps {
 }
 const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
 
-    const { useTeacherCreate } = useTeachers();
-    const { mutate: createFn } = useTeacherCreate();
+    const { useTeacherCreate, useTeacherUpdate } = useTeachers();
+    const { mutate: createFn, } = useTeacherCreate();
+    const { mutate: updateFn } = useTeacherUpdate();
     const {
         control,
         handleSubmit,
@@ -49,7 +50,7 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
 
     const onSubmit = (data: any) => {
         if (update?.id) {
-            createFn(data, {
+            updateFn(data, {
                 onSuccess: () => {
                     toggle();
                     reset();
@@ -66,11 +67,9 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
     }
 
     const prefixSelector = (
-        <Form.Item name="prefix" noStyle >
-            <Select style={{ width: 90}} defaultValue={"+998"}>
-                <Option value="+998">+998</Option>
-            </Select>
-        </Form.Item>
+        <Select style={{ width: 90}} defaultValue={"+998"}>
+            <Option value="+998" >+998</Option>
+        </Select>
     );
 
     return (

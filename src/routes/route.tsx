@@ -16,12 +16,9 @@ import {
     SignUp,
     Rooms
 } from "@pages";
-// import { Suspense } from "react";
-
 const Router = () => {
     const router = createBrowserRouter(
         createRoutesFromElements(
-            // <Suspense fallback={<div>Yuklanmoqda...</div>}>
                 <Route path="/" element={<App />}>
                     <Route index element={<LoginProtected><SignIn /></LoginProtected>} />
                     <Route path="/sign-up" element={<SignUp />} />
@@ -50,7 +47,6 @@ const Router = () => {
                     {/* 404 PAGE */}
                     <Route path="*" element={<NotFound />} />
                 </Route>
-            // </Suspense>
         )
     );
 

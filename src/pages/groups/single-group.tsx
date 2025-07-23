@@ -15,8 +15,7 @@ const SingleGroup = () => {
     page: 1,
     limit: 10
   });
-  console.log(open, 'open');
-  console.log(update, 'update');
+  console.log(open, update);
   
   const { id } = useParams();
 
