@@ -1,90 +1,149 @@
-
-import React, { useState, } from "react"
-import { useNavigate } from "react-router-dom"
-import { setItem } from "../../helpers"
-import { Button, Input, Select, Space } from "antd"
-import { useAuth } from "@hooks" 
-import { ArrowRightOutlined, UserOutlined } from "@ant-design/icons"
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { setItem } from "@helpers";
+import { Controller, useForm } from "react-hook-form";
+import { Button, Input, Select, Form } from "antd";
+import { useAuth } from "@hooks";
+import { UnlockOutlined, UserOutlined } from "@ant-design/icons";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { signInSchema } from "@utils";
 
 const SignIn = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [passwordVisible, setPasswordVisible] = React.useState(false);
-  const [role, setRole] = useState('admin')
-  const navigate = useNavigate()
-  const { mutate } = useAuth()
+  const navigate = useNavigate();
+  const { mutate } = useAuth();
 
-  const submit = async(e: React.MouseEvent<HTMLElement>)=> {
-    e.preventDefault()
-    const payload = {email, password}
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: yupResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      role: 'admin'
+    },
+  });
+
+  const onSubmit = (values: any) => {
     mutate(
-      { data: payload, role },
+      { data: { email: values.email, password: values.password }, role: values.role },
       {
-        onSuccess: (res: any)=> {
+        onSuccess: (res: any) => {
           if (res.status === 201) {
-            setItem('access_token', res.data.access_token)
-            setItem('role', role)
-            navigate(`${role}`)
+            setItem("access_token", res.data.access_token);
+            setItem("role", values.role);
+            navigate(`/${values.role}`);
           }
-        }
+        },
       }
-    )
-  }
+    );
+  };
+
   return (
-    <>
-      <div className="w-[100%] h-[100vh] flex items-center justify-center">
-        <form className="w-[400px] h-[400px] flex flex-col justify-evenly items-center opacity-60 rounded-2xl transition-all hover:shadow-[15px_15px_30px_gray] shadow-[5px_5px_15px_gray] bg-gray-100"> 
-            <h1 className="text-3xl font-bold text-black">Sign In</h1>
-            <Input size="large" placeholder="Email. . ." prefix={<UserOutlined />} 
-              style={{
-                width: 310
-              }}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <Space direction="horizontal">
-              <Input.Password
-                placeholder="Password. . ."
+    <div className="w-[100%] h-[100vh] flex items-center justify-center">
+      <Form
+        layout="vertical"
+        onFinish={handleSubmit(onSubmit)}
+        style={{
+          width: 330,
+          height: 420,
+          borderRadius: 10,
+          backgroundColor: "#FAFAFA",
+          boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+          border: "1px solid #e1e1e1",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "space-around",
+        }}
+      >
+        <span className="font-bold h-[80px] flex items-center mt-[20px]">
+          <p className="text-3xl">Sign In</p>
+        </span>
+
+        {/* Email */}
+        <Form.Item
+          label="Email"
+          validateStatus={errors.email ? "error" : ""}
+          help={errors.email?.message}
+          style={{ width: "84%" }}
+        >
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
                 size="large"
-                visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter an email..."
+                prefix={<UserOutlined />}
               />
-              <Button style={{ width: 80 }} onClick={() => setPasswordVisible((prevState) => !prevState)} size="large">
-                {passwordVisible ? 'Hide' : 'Show'}
-              </Button>
-            </Space>
-            <div className="w-[78%] flex items-center justify-between ">
+            )}
+          />
+        </Form.Item>
+
+        {/* Password */}
+        <Form.Item
+          label="Password"
+          validateStatus={errors.password ? "error" : ""}
+          help={errors.password?.message}
+          style={{ width: "84%" }}
+        >
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <Input.Password
+                {...field}
+                size="large"
+                placeholder="Enter a password..."
+                prefix={<UnlockOutlined />}
+                visibilityToggle={{ visible: passwordVisible, onVisibleChange: setPasswordVisible }}
+              />
+            )}
+          />
+        </Form.Item>
+
+        {/* Role */}
+        <Form.Item label="Role" style={{ width: "84%" }}>
+          <Controller
+            name="role"
+            control={control}
+            render={({ field }) => (
               <Select
-                  defaultValue="Admin"
-                  style={{ width: 100, height: 38 }}
-                  onChange={(value)=> setRole(value)}
-                  options={[
-                    {
-                      label: <span>Admin</span>,
-                      title: 'Admins',
-                      options: [
-                        { label: <span>Admin</span>, value: 'admin' },
-                      ],
-                    },
-                    {
-                      label: <span>Others</span>,
-                      title: 'others',
-                      options: [
-                        { label: <span>Teachers</span>, value: 'teacher' },
-                        { label: <span>Students</span>, value: 'student' },
-                        { label: <span>Lids</span>, value: 'lids' },
-                      ],
-                    },
-                  ]}
-                />
-              <Button size="large" type="primary" onClick={submit}>Submit <ArrowRightOutlined /></Button>
-            </div>
-          </form>
-      </div>
-    </>
-  )
-}
+                {...field}
+                style={{ width: "100%", height: 38 }}
+                options={[
+                  {
+                    label: <span>Admin</span>,
+                    title: "Admins",
+                    options: [{ label: <span>Admin</span>, value: "admin" }],
+                  },
+                  {
+                    label: <span>Others</span>,
+                    title: "others",
+                    options: [
+                      { label: <span>Teachers</span>, value: "teacher" },
+                      { label: <span>Students</span>, value: "student" },
+                      { label: <span>Lids</span>, value: "lids" },
+                    ],
+                  },
+                ]}
+              />
+            )}
+          />
+        </Form.Item>
 
-export default SignIn
+        <Form.Item style={{ width: "84%", display: "flex", justifyContent: "end" }}>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
+  );
+};
 
+export default SignIn;

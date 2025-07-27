@@ -1,9 +1,12 @@
+import { Suspense } from "react"
 import { Outlet } from "react-router-dom"
 
 const App = () => {
   return (
     <div className="color-change-5x scroll-auto">
-      <Outlet/>
+      <Suspense fallback>
+        <Outlet />
+      </Suspense>
     </div>
   )
 }

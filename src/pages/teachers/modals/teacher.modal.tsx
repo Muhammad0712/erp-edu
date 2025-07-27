@@ -2,7 +2,7 @@ import type { ModalProps, TeacherType } from '@types'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { teacherFormSchema } from '@utils'
-import { Form, Input, InputNumber, Modal, Select,  } from 'antd'
+import { Button, Form, Input, InputNumber, Modal, Select} from 'antd'
 import { useTeachers } from '@hooks'
 import { useEffect } from 'react'
 import { Option } from 'antd/es/mentions'
@@ -33,6 +33,8 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
             branch_id: NaN
         }
     });
+    
+
 
     useEffect(() => {
         if (update?.id) {
@@ -154,21 +156,6 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
                             }}
                         />
                     </Form.Item>
-                    {/* <Form.Item
-                        label='Phone'
-                        name='phone'
-                        validateStatus={errors.phone ? 'error' : ""}
-                        help={errors.phone ? errors.phone.message : ""}
-                        htmlFor='phone'
-                    >
-                        <Controller
-                            name='phone'
-                            control={control}
-                            render={({ field }) => {
-                                return <InputNumber {...field} status={errors.phone ? 'error' : ""} placeholder='Phone' id='phone' autoComplete='off' />
-                            }}
-                        />
-                    </Form.Item> */}
                     <Form.Item
                         label="Phone"
                         name="phone"
@@ -191,6 +178,37 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
                                 />
                             )}
                         />
+                    </Form.Item>
+                    <div className="flex justify-between">
+                        <Form.Item
+                            label='Role'
+                            name='role'
+                            validateStatus={errors.role ? 'error' : ""}
+                            help={errors.role ? errors.role.message : ""}
+                            htmlFor='role'
+                            style={{ width: '40%' }}
+                        >
+                            <Select defaultValue='assistant teacher' id='role'>
+                                <Option value='assistant teacher'>Assistant Teacher</Option>
+                                <Option value='main teacher'>Main teacher</Option>
+                            </Select>
+                        </Form.Item>
+                        {/* <Form.Item
+                            label='Status'
+                            name='status'
+                            validateStatus={errors. ? 'error' : ""}
+                            help={errors.status ? errors.status.message : ""}
+                            htmlFor='status'
+                            style={{ width: '40%'}}
+                        >
+                            <Select  defaultValue='active' id='status'>
+                                <Option value='active'>Active</Option>
+                                <Option value='inactive'>Inactive</Option>
+                            </Select>
+                            </Form.Item> */}
+                    </div>
+                    <Form.Item>
+                        <Button type='primary' htmlType='submit'>{update?.id ? "Update" : "Create"}</Button>
                     </Form.Item>
                 </Form> 
             </Modal>

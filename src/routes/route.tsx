@@ -1,4 +1,5 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
+
 import App from "../App";
 import {
     LayoutProtected,
@@ -19,7 +20,14 @@ import {
 const Router = () => {
     const router = createBrowserRouter(
         createRoutesFromElements(
-                <Route path="/" element={<App />}>
+            <>
+
+
+                <Route path="/" element={
+
+                    <App />
+
+                }>
                     <Route index element={<LoginProtected><SignIn /></LoginProtected>} />
                     <Route path="/sign-up" element={<SignUp />} />
 
@@ -29,9 +37,9 @@ const Router = () => {
                         <Route path="groups/:id" element={<SingleGroup />} />
                         <Route path="courses" element={<Courses />} />
                         <Route path="students" element={<Students />} />
-                        <Route path="teachers" element={<Teachers/>} />
-                        <Route path="branches" element={<Branches/>} /> 
-                        <Route path="rooms" element={<Rooms/>} />
+                        <Route path="teachers" element={<Teachers />} />
+                        <Route path="branches" element={<Branches />} />
+                        <Route path="rooms" element={<Rooms />} />
                     </Route>
 
                     {/* TEACHER LAYOUT */}
@@ -47,6 +55,7 @@ const Router = () => {
                     {/* 404 PAGE */}
                     <Route path="*" element={<NotFound />} />
                 </Route>
+            </>
         )
     );
 

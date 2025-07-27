@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   BookOutlined,
   CodepenOutlined,
@@ -8,10 +8,10 @@ import {
   TeamOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, theme, Tooltip } from 'antd';
+import { Layout, Menu, theme } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import logOut from '@assets/images/log-out-my.svg'
 import { getItem } from '@helpers';
+import { AvatarDropdown } from '@components';
 
 const { Header, Content, Sider } = Layout;
 
@@ -36,20 +36,12 @@ const items: MenuItem[] = [
   getInfo('Courses', 'courses', <JavaScriptOutlined />),
   getInfo('Teachers', 'teachers', <ReadOutlined />),
   getInfo('Students', 'students', <BookOutlined />),
-  getInfo('Branches', 'branches', <ContactsOutlined   />),
+  getInfo('Branches', 'branches', <ContactsOutlined />),
   getInfo('Rooms', 'rooms', <CodepenOutlined />),
 ];
 
 const AdminLayout = () => {
-
-  // Current time
-  const [time, setTime] = useState(new Date());
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-  // ---------------
-
+  const [title, setTitle] = useState<React.ReactNode>(<span>Admin</span>);
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -58,7 +50,8 @@ const AdminLayout = () => {
     navigate(`/${role}/${url}`);
     return
   }
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -83,45 +76,49 @@ const AdminLayout = () => {
       case 'rooms':
         throwPage('rooms')
         break;
-        
+
       default:
         break;
     }
   };
 
-  const handleLogOut = () => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('role')
-    navigate('/')
-  }
-
-  
-  
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        collapsedWidth={80}
+        onCollapse={(value) => {
+          setTitle(value ? <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shield-user-icon lucide-shield-user"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="M6.376 18.91a6 6 0 0 1 11.249.003" /><circle cx="12" cy="11" r="4" /></svg> : <>{'Admin'}</>);
+          setCollapsed(value)
+        }}
+
+      >
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" selectedKeys={[location.pathname.split('/')[2] || location.pathname.split('/')[1]]} mode="inline" items={items} onClick={handleMenuClick}/>
+        <div className={`flex items-center justify-center w-full h-[60px] transition-all duration-300 overflow-hidden`}>
+          {<span className='text-2xl font-bold text-white'>{title}</span>}
+        </div>
+        <Menu
+          theme="dark"
+          selectedKeys={[location.pathname.split('/')[2] || location.pathname.split('/')[1]]}
+          mode="inline"
+          items={items}
+          onClick={handleMenuClick}
+        />
       </Sider>
       <Layout>
-        <Header style={{ 
-          padding: '0 16px', 
-          background: colorBgContainer, 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between'
+        <Header style={{
+          padding: '0 16px',
+          background: colorBgContainer,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'end'
         }}
         >
-          <h1 className="text-2xl font-bold">Admin Panel</h1>
-          <div className="flex gap-2 items-center justify-between w-[150px]">
-            <h1 className="text-2xl font-bold">{time.toLocaleTimeString()}</h1>
-            <Tooltip title="Log out">
-              <img src={logOut} alt="log-out" className='w-[25px] h-[25px] cursor-pointer' onClick={handleLogOut} />
-            </Tooltip>
-          </div>
+          <AvatarDropdown />
         </Header>
         <Content style={{ margin: '10px 10px' }}>
-          <Outlet/>
+          <Outlet />
         </Content>
       </Layout>
     </Layout>

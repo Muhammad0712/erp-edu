@@ -3,17 +3,23 @@ import { groupsService } from "@service/groups.service"
 import type { Group, ParamsType } from "@types";
 
 
-export const useGroup = (params: ParamsType, id?: number) => {
+export const useGroup = (params?: ParamsType, id?: number) => {
     const queryClient = useQueryClient()
     const { data } = useQuery({
         queryKey: ['groups', params],
-        queryFn: async () => groupsService.getGroups(params)
+        queryFn: async () => groupsService.getGroups(params!)
     });
+    const getGroupById = useQuery({
+        queryKey: ['group', id],
+        queryFn: async () => groupsService.getGroupById(params!, id!),
+        enabled: !!id
+    });
+    const group = getGroupById.data;
+
     const getStudentsByGroupId = useQuery({
         queryKey: ['group-students', params],
-        queryFn: async () => groupsService.getGroupById(params, id!),
+        queryFn: async () => groupsService.getStudentsByGroupId(params!, id!),
         enabled: !!id
-        
     });
     const students = getStudentsByGroupId.data;
 
@@ -45,6 +51,7 @@ export const useGroup = (params: ParamsType, id?: number) => {
     }
     return {
         data,
+        group,
         students,
         useGroupCreate,
         useGroupUpdate,

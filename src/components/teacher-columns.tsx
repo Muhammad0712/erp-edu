@@ -32,6 +32,8 @@ export const TeacherColumns: ColumnsType<TeacherType> = [
         title: 'Branches',
         dataIndex: 'branches',
         key: 'branches',
-        render: (branches) => <span>{branches.name}</span>
+        render: (branch) => {
+            return branch.map((branch: any) => branch.name).join(', ');
+        },
     },
 ]

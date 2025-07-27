@@ -6,20 +6,20 @@ export const LessonsList = ({ lessons }: { lessons: Lesson[] }) => {
     const containerRef = useRef<HTMLDivElement>(null)
     const scrollPosition = 0
     const handleScroll = () => {
-        
+
     }
     const goNext = () => {
-        if(containerRef.current) {
+        if (containerRef.current) {
             containerRef.current.scrollBy({ left: 50, behavior: 'smooth' })
         }
     }
     const goPrev = () => {
-        if(containerRef.current) {
+        if (containerRef.current) {
             containerRef.current.scrollBy({ left: -50, behavior: 'smooth' })
         }
     }
     const isStartDisabled = () => {
-        if(!containerRef.current) return true
+        if (!containerRef.current) return true
         return scrollPosition <= 5;
     }
     const isEndDisabled = () => {

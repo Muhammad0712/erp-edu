@@ -2,9 +2,9 @@ import type { TeacherType } from "@types";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useGeneral, useTeachers } from "@hooks";
-import { Button, Space, Table, type TablePaginationConfig } from "antd";
+import { Button, Space, Table, Tooltip, type TablePaginationConfig } from "antd";
 import { PopConfirm, TeacherColumns } from "@components";
-import { EditOutlined, UserAddOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import TeacherModal from "./modals/teacher.modal";
 
 
@@ -29,7 +29,6 @@ const Teachers = () => {
   }, [location.search]);
   const { data, useTeachersDelete } = useTeachers(params);
   console.log(data);
-  
   const { handlePagination } = useGeneral();
   const { mutate: deleteFn, isPending: isDeleting } = useTeachersDelete();
   const deleteItem = async (id: number) => {
@@ -57,7 +56,7 @@ const Teachers = () => {
       render: (_: any, record: TeacherType) => (
         <>
           <Space>
-            <Button type="primary" onClick={() => editItem(record)}>
+            <Button type="primary" size="small" onClick={() => editItem(record)}>
               <EditOutlined />
             </Button>
             {<PopConfirm handleDelete={() => deleteItem(record.id!)} loading={isDeleting} />}
@@ -71,16 +70,19 @@ const Teachers = () => {
       <div className="w-[100%] flex flex-col items-center">
         <div className="w-[100%] h-[40px] flex items-center justify-between">
           <h1 className="text-3xl font-bold">Teachers</h1>
-          <Button 
-            type="primary" 
-            onClick={toggle}
-            icon={<UserAddOutlined />}
-          >
-          </Button>
+          <Tooltip title = "Add Teacher">
+            <Button
+              type="primary"
+              onClick={toggle}
+              size="large"
+            >
+              Add teacher
+            </Button>
+          </Tooltip>
         </div>
         <Table
           columns={columns}
-          dataSource={data?.data.teachers}
+          dataSource={data?.data.data}
           rowKey={(row)=> row.id!}
           pagination={{
             current: params.page,

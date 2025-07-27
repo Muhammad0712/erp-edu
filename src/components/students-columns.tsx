@@ -23,13 +23,8 @@ export const StudentsColumns: ColumnsType<StudentsType> = [
         key: 'phone',
     },
     {
-        title: 'Gender',
-        dataIndex: 'gender',
-        key: 'gender',
-    },
-    {
         title: 'Date Of Birth',
         dataIndex: 'date_of_birth',
         key: 'date_of_birth',
-    },
+    }
 ];

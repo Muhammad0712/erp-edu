@@ -17,7 +17,7 @@ const PopConfirm = ({ handleDelete, loading }: Props) => {
         disabled={loading}
         onConfirm={handleDelete}
       >
-        <Button type="primary" danger onClick={handleDelete}>
+        <Button type="primary" size='small' danger onClick={handleDelete}>
           <DeleteOutlined />
         </Button>
       </Popconfirm>

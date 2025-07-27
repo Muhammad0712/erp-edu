@@ -1,5 +1,5 @@
-import { BookOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Space, Table, type TablePaginationConfig } from 'antd';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, Space, Table, Tooltip, type TablePaginationConfig } from 'antd';
 import CourseModal from './modals/course.modal';
 import { useCourses, useGeneral } from '@hooks';
 import { useLocation } from 'react-router-dom';
@@ -71,11 +71,14 @@ const Courses = () => {
     <div className="w-[100%] flex flex-col items-center">
       <div className="w-[100%] h-[40px] flex items-center justify-between">
         <h1 className="text-2xl font-bold">Courses</h1>
-        <Button type="primary"
-          onClick={() => setOpen(true)}
-        >
-          +<BookOutlined />
+        <Tooltip title = 'Add Course'>
+          <Button type="primary"
+            onClick={() => setOpen(true)}
+            size='large'
+          >
+            Add Course
         </Button>
+        </Tooltip>
       </div>
       <Table
         columns={columns}

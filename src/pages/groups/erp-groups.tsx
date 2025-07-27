@@ -1,4 +1,4 @@
-import { EditOutlined, EyeOutlined, UsergroupAddOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { Button, Space, Table, Tooltip, type TablePaginationConfig } from "antd";
 import { PopConfirm, GroupColumns } from "@components";
 import { Link, useLocation } from "react-router-dom";
@@ -56,7 +56,7 @@ const Groups = () => {
         <>
           <Space size={"middle"}>
             <Tooltip title="Edit" >
-              <Button type="primary" onClick={() => editItem(record)}>
+              <Button type="primary" size="small" onClick={() => editItem(record)}>
                 <EditOutlined />
               </Button>
             </Tooltip>
@@ -84,8 +84,9 @@ const Groups = () => {
             <Button
               type="primary"
               onClick={() => setOpen(true)}
-              icon={<UsergroupAddOutlined />}
+              size="large"
             >
+              Add Group
             </Button>
           </Tooltip>
         </div>

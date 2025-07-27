@@ -30,7 +30,7 @@ const disabled7DaysDate: DatePickerProps['disabledDate'] = (current, { from, typ
   return false;
 };
 
-const SignInDatePicker: React.FC = () => (
+const FormDatePicker: React.FC = () => (
   <Space direction="vertical" style={{
     width: '90%',
     height: '40px',
@@ -49,4 +49,4 @@ const SignInDatePicker: React.FC = () => (
   </Space>
 );
 
-export default SignInDatePicker;
+export default FormDatePicker;

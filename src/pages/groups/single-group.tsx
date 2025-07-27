@@ -1,7 +1,7 @@
-import { Button, Space, Table, type TablePaginationConfig } from 'antd';
+import { Button, Space, Table, Tooltip } from 'antd';
 import { PopConfirm, StudentsColumns } from '@components';
 import { EditOutlined } from '@ant-design/icons';
-import { useGeneral, useGroup } from '@hooks';
+import { useGroup } from '@hooks';
 import { useParams } from 'react-router-dom';
 import type { StudentsType } from '@types';
 import { useState } from 'react';
@@ -11,21 +11,8 @@ import { useState } from 'react';
 const SingleGroup = () => {
   const [open, setOpen] = useState(false);
   const [update, setUpdate] = useState<StudentsType | null>(null);
-  const [params, setParams] = useState({
-    page: 1,
-    limit: 10
-  });
-  console.log(open, update);
-  
   const { id } = useParams();
-
-  const { students } = useGroup(params, +id!);
-  const allStudents = students?.data?.group.students;
-
-  const handleTableChange = (pagination: TablePaginationConfig) => {
-    handlePagination({ pagination, setParams })
-  }
-  const { handlePagination } = useGeneral();
+  const { students, group } = useGroup(undefined, Number(id!));
 
   const deleteItem = (id: number) => {
     console.log(id);
@@ -50,7 +37,7 @@ const SingleGroup = () => {
       render: (_: any, record: StudentsType) => (
         <>
           <Space size={"middle"}>
-            <Button type="primary" onClick={() => editItem(record)}>
+            <Button type="primary" size="small" onClick={() => editItem(record)}>
               <EditOutlined />
             </Button>
             {<PopConfirm handleDelete={() => deleteItem(record.id!)} />}
@@ -64,26 +51,35 @@ const SingleGroup = () => {
     <div className='w-[100%] flex flex-col h-[545px] gap-4'>
       <div className="w-[100%] h-[200px] flex justify-between">
         <div className="w-[59.5%] h-[100%] bg-white"></div>
-        <div className="w-[39.5%] h-[100%] bg-white"></div>
-      </div>
-        <div className="w-[100%] h-[100px] flex gap-[5px] bg-white overflow-x-scroll">
-          
+        <div className="w-[39.5%] h-[100%] bg-white p-[10px] flex flex-col justify-between">
+          <p className='text-lg'>Group: {group?.data.group.name}</p>
+          <p className='text-lg'>Course: {group?.data.group.course.title}</p>
+          <p className='text-lg'>Start Date: {group?.data.group.start_date}</p>
+          <p className='text-lg'>Start Time: {group?.data.group.start_time}</p>
+          <p className='text-lg'>Group lessons count: {group?.data.group.lessons.length}</p>
         </div>
+      </div>
+      <div className="w-[100%] h-[200px] flex flex-wrap gap-[5px] bg-white overflow-y-scroll border-4 border-gray-300 p-[5px]">
+        {/* <LessonsList lessons={group?.data.group.lessons} /> */}
+        {group?.data.group.lessons.map((lesson: any) => {
+          return (
+            <Tooltip title={`${lesson.title} - ${lesson.date.split("T")[0]}`} key={lesson.id}>
+              <div key={lesson.id} className="w-[13.5%] h-[40px] bg-gray-200 flex flex-col items-center justify-center border">
+                <p>{lesson.title}</p>
+                {/* <p>{lesson.date.split("T")[0]}</p> */}
+              </div>
+            </Tooltip>
+          );
+        })}
+      </div>
       <Table
+        pagination={false}
         columns={columns}
-        dataSource={allStudents}
+        dataSource={students?.data.student ? [students.data.student] : []}
         rowKey={(row) => row.id!}
-        pagination={{
-          current: params.page, 
-          pageSize: params.limit,
-          total: allStudents?.length,
-          showSizeChanger: true,
-          pageSizeOptions: ["4", "5", "6", "7", "10"],
-        }}
         style={{
           width: "100%",
         }}
-        onChange={handleTableChange}
       />
     </div>
   )

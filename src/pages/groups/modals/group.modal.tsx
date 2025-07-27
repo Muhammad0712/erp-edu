@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Modal, Select, Input, Button, Form, DatePicker } from 'antd';
+import { Modal, Select, Input, Button, Form, DatePicker, TimePicker } from 'antd';
 import type { Group, ModalProps } from '@types';
 import { useCourses, useGroup } from '@hooks';
 import { useForm, Controller } from "react-hook-form";
@@ -12,16 +12,17 @@ import dayjs from 'dayjs';
 
 dayjs.extend(customParseFormat);
 const dateFormat = 'YYYY-MM-DD';
+const timeFormat = 'HH:mm';
 interface GroupProps extends ModalProps {
   update: Group | null;
 }
 
 const GroupModal = ({ open, toggle, update }: GroupProps) => {
-  const { data } = useCourses({ page: 1, limit: 10 });
+  const { data: courses } = useCourses({ page: 1, limit: 10 });
   const { useGroupCreate, useGroupUpdate } = useGroup({ page: 1, limit: 10 });
   const createGroup = useGroupCreate();
-  const updateGroupMutation = useGroupUpdate();
-
+  const updateGroup = useGroupUpdate();
+  
   const {
     control,
     handleSubmit,
@@ -35,7 +36,7 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
       course_id: undefined,
       status: '',
       start_date: '',
-      end_date: '',
+      start_time: '',
     }
   });
 
@@ -44,16 +45,16 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
       setValue('name', update.name);
       setValue('course_id', update.course_id);
       setValue('start_date', update.start_date);
-      setValue('end_date', update.end_date);
+      setValue('start_time', update.start_time);
       setValue('status', update.status);
     } else {
       reset();
     }
   }, [update, setValue, reset]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (res: any) => {
     if (update?.id) {
-      updateGroupMutation.mutate({ ...data, id: update.id }, {
+      updateGroup.mutate({ ...res, id: update.id }, {
         onSuccess: () => {
           toggle();
           reset();
@@ -63,7 +64,7 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
         }
       });
     } else {
-      createGroup.mutate(data, {
+      createGroup.mutate(res, {
         onSuccess: () => {
           toggle();
           reset();
@@ -104,7 +105,7 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
             name="name"
             control={control}
             render={({ field }) => (
-              <Input {...field} status={errors.name ? "error" : ""} placeholder="Group name" id="name" autoComplete="off"/>
+              <Input {...field} status={errors.name ? "error" : ""} placeholder="Group name" id="name" autoComplete="off" />
             )}
           />
         </Form.Item>
@@ -119,7 +120,7 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
           <Controller
             name="course_id"
             control={control}
-            render={({ field }) => (  
+            render={({ field }) => (
               <Select
                 id="course_id"
                 {...field}
@@ -132,7 +133,7 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
                     .toLowerCase()
                     .localeCompare((optionB?.label ?? "").toLowerCase())
                 }
-                options={data?.data?.courses.map((course: any) => ({
+                options={courses?.data?.courses.map((course: any) => ({
                   value: course.id,
                   label: course.title
                 }))}
@@ -142,19 +143,15 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
         </Form.Item>
         <div className="w-[100%] flex justify-between">
           <Form.Item name="start_date" label="Start date" style={{ width: "40%" }}>
-            <DatePicker 
+            <DatePicker
               name="start_date"
-              style={{ width: "100%" }} 
+              style={{ width: "100%" }}
               onChange={(value) => setValue("start_date", value?.format(dateFormat))}
-              minDate={dayjs('2023-01-01')} 
+              minDate={dayjs('2023-01-01')}
             />
           </Form.Item>
-          <Form.Item name="end_date" label="End date" style={{ width: "40%" }}>
-            <DatePicker 
-              name="end_date" 
-              style={{width: "100%"}}
-              onChange={(value) => setValue("end_date", value?.format(dateFormat))}
-            />
+          <Form.Item name="start_time" label="Start_time" style={{ width: "40%" }}>
+            <TimePicker onChange={(value) => setValue("start_date", value?.format(timeFormat))} needConfirm />
           </Form.Item>
         </div>
         <Form.Item
@@ -182,11 +179,20 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
             )}
           />
         </Form.Item>
+        <Form.Item name="roomId">
+          <Select placeholder="Select a room">
+            {/* {courses?.data?.rooms.map((room: any) => (
+              <Select.Option key={room.id} value={room.id}>
+                {room.name}
+              </Select.Option>
+            ))} */}
+          </Select>
+        </Form.Item>
         <Form.Item>
           <Button
             type="primary"
             htmlType="submit"
-            loading={createGroup.isPending || updateGroupMutation.isPending}
+            loading={createGroup.isPending || updateGroup.isPending}
           >
             {update?.id ? "Update" : "Create"}
           </Button>
