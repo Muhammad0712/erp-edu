@@ -27,7 +27,8 @@ const Students = () => {
     }
   }, [location.search]);
 
-  const { data, useStudentDelete } = useStudent(params);
+  const { data, useStudentDelete } = useStudent(params);  
+  console.log(data, 'data from students');
   const { handlePagination } = useGeneral();
   const { mutate: deleteFn, isPending: isDeleting } = useStudentDelete();
   const deleteItem = async (id: number) => {

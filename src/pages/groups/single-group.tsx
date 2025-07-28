@@ -13,6 +13,8 @@ const SingleGroup = () => {
   const [update, setUpdate] = useState<StudentsType | null>(null);
   const { id } = useParams();
   const { students, group } = useGroup(undefined, Number(id!));
+  console.log(students, 'students');
+  console.log(group, 'group');
 
   const deleteItem = (id: number) => {
     console.log(id);
@@ -48,7 +50,7 @@ const SingleGroup = () => {
   ]
 
   return (
-    <div className='w-[100%] flex flex-col h-[545px] gap-4'>
+    <div className='w-[100%] flex flex-col h-[545px] gap-2'>
       <div className="w-[100%] h-[200px] flex justify-between">
         <div className="w-[59.5%] h-[100%] bg-white"></div>
         <div className="w-[39.5%] h-[100%] bg-white p-[10px] flex flex-col justify-between">
@@ -60,11 +62,17 @@ const SingleGroup = () => {
         </div>
       </div>
       <div className="w-[100%] h-[200px] flex flex-wrap gap-[5px] bg-white overflow-y-scroll border-4 border-gray-300 p-[5px]">
+      <div className="w-[100%] h-[50px] flex justify-between items-center bg-white p-[10px] border-2 border-gray-300 sticky top-0 left-0">
+        <h1 className='text-lg'>Lessons</h1>
+        <Button type='primary' onClick={() => {}}>
+          Add Lesson
+        </Button>
+      </div>
         {/* <LessonsList lessons={group?.data.group.lessons} /> */}
         {group?.data.group.lessons.map((lesson: any) => {
           return (
-            <Tooltip title={`${lesson.title} - ${lesson.date.split("T")[0]}`} key={lesson.id}>
-              <div key={lesson.id} className="w-[13.5%] h-[40px] bg-gray-200 flex flex-col items-center justify-center border">
+            <Tooltip title={`${lesson.title}.  ${lesson.date.split("T")[0]}`} key={lesson.id}>
+              <div key={lesson.id} className="w-[13.5%] h-[40px] bg-gray-200 flex flex-col items-center justify-center border cursor-pointer">
                 <p>{lesson.title}</p>
                 {/* <p>{lesson.date.split("T")[0]}</p> */}
               </div>
