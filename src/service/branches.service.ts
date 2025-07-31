@@ -16,8 +16,8 @@ export const branchesService = {
         const res = await apiConfig().getRequest(`${ApiUrls.BRANCHES}/${model.id}`)
         return res
     },
-    async updateBranch(model: BranchesType) {
-        const res = await apiConfig().patchRequest(`${ApiUrls.BRANCHES}/${model.id}`, model)
+    async updateBranch(model: BranchesType, id: number) {
+        const res = await apiConfig().patchRequest(`${ApiUrls.BRANCHES}/${id}`, model)
         return res
     },
     async deleteBranch(id: number): Promise<any> {

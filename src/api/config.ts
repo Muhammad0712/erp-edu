@@ -9,6 +9,7 @@ export function apiConfig() {
         } catch (error: any) {
             console.log(error?.response?.data);
             Notification('error', error?.message)
+            throw error
         }
     }
 
@@ -23,6 +24,7 @@ export function apiConfig() {
         } catch (error: any) {
             console.log(error?.response?.data);
             Notification('error', error?.message)
+            throw error
         }
     }
 
@@ -37,6 +39,7 @@ export function apiConfig() {
         } catch (error: any) {
             console.log(error?.response?.data);
             Notification('error', error?.message)
+            throw error
         }
     }
 
@@ -51,6 +54,7 @@ export function apiConfig() {
         } catch (error: any) {
             console.log(error?.response?.data);
             Notification('error', error?.message)
+            throw error
         }
     }
 
@@ -65,6 +69,7 @@ export function apiConfig() {
         } catch (error: any) {
             console.log(error?.response?.data);
             Notification('error', error?.message)
+            throw error
         }
     }
 

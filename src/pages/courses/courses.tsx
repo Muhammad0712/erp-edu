@@ -3,13 +3,14 @@ import { Button, Space, Table, Tooltip, type TablePaginationConfig } from 'antd'
 import CourseModal from './modals/course.modal';
 import { useCourses, useGeneral } from '@hooks';
 import { useLocation } from 'react-router-dom';
-import { CourseColumns } from '@components';
+import { CourseColumns, PopConfirm } from '@components';
 import { useEffect, useState } from 'react';
-import type { Course } from '@types';
+import type { CoursesType } from '@types';
 
 const Courses = () => {
-  const [update, setUpdate] = useState<Course | null>(null);
+  const [update, setUpdate] = useState<CoursesType | null>(null);
   const [open, setOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const [params, setParams] = useState({
     page: 1,
     limit: 10
@@ -34,7 +35,7 @@ const Courses = () => {
     console.log(id);
     deleteFn(id);
   }
-  const editItem = (record: Course) => {
+  const editItem = (record: CoursesType) => {
     setUpdate(record);
     setOpen(true);
   }
@@ -52,19 +53,39 @@ const Courses = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (_: any, record: Course) => (
+      render: (_: any, record: CoursesType) => (
         <>
-          <Space>
-            <Button type="primary" onClick={() => editItem(record)}>
-              <EditOutlined />
-            </Button>
-            <Button type="primary" danger onClick={() => deleteItem(record.id!)} loading={isDeleting}>
-              <DeleteOutlined />
-            </Button>
+          <Space size={"middle"}>
+            <Tooltip title="Edit">
+              <Button type="primary" size="small" onClick={() => editItem(record)}>
+                <EditOutlined />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Delete">
+              {deleteId === record.id && (
+                <PopConfirm
+                  openPop={true}
+                  setOpenPop={(open) => setDeleteId(open ? record.id! : null)}
+                  handleDelete={() => {
+                    deleteItem(record.id!);
+                    setDeleteId(null);
+                  }}
+                  loading={isDeleting}
+                />
+              )}
+              <Button
+                type="primary"
+                size="small"
+                danger
+                onClick={() => setDeleteId(record.id!)}
+              >
+                <DeleteOutlined />
+              </Button>
+            </Tooltip>
           </Space>
         </>
-      ),
-    },
+      )
+    }
   ];
 
   return (
@@ -72,9 +93,9 @@ const Courses = () => {
       <div className="w-[100%] h-[40px] flex items-center justify-between">
         <h1 className="text-2xl font-bold">Courses</h1>
         <Tooltip title = 'Add Course'>
-          <Button type="primary"
+          <Button 
+            type="primary"
             onClick={() => setOpen(true)}
-            size='large'
           >
             Add Course
         </Button>

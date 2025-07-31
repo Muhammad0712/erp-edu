@@ -7,7 +7,7 @@ import type { RoomsType, ParamsType } from "@types";
 const useRooms = (params?: ParamsType) => {
     const queryClient = useQueryClient()
     const { data } = useQuery({
-        queryKey: ['courses', params],
+        queryKey: ['rooms', params],
         queryFn: async () => roomsService.getAllRooms(params)
     });
 
@@ -22,9 +22,7 @@ const useRooms = (params?: ParamsType) => {
 
     const useRoomsUpdate = () => {
         return useMutation({
-            mutationFn: async (data: RoomsType) => {
-                roomsService.updateRoom(data)
-            },
+            mutationFn: async ({data, id}: {data: RoomsType, id: number}) =>  roomsService.updateRoom(data, id),
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['rooms'] })
             }

@@ -1,7 +1,7 @@
 import type { ColumnsType } from "antd/es/table";
-import type { Course } from "@types";
+import type { CoursesType } from "@types";
 
-export const CourseColumns: ColumnsType<Course> = [
+export const CourseColumns: ColumnsType<CoursesType> = [
     {
         title: 'Title',
             dataIndex: 'title',

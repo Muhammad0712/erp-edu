@@ -5,6 +5,7 @@ export interface StudentsType{
     email: string,
     phone: string,
     password_hash: string,
+    confirm_password: string,
     gender: string,
     date_of_birth: string,
     lidId?: number,

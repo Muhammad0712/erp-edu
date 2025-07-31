@@ -1,16 +1,17 @@
-import type { TeacherType } from "@types";
+import type { TeachersType } from "@types";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useGeneral, useTeachers } from "@hooks";
 import { Button, Space, Table, Tooltip, type TablePaginationConfig } from "antd";
 import { PopConfirm, TeacherColumns } from "@components";
-import { EditOutlined } from "@ant-design/icons";
-import TeacherModal from "./modals/teacher.modal";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { TeachersModal } from "@pages";
 
 
 const Teachers = () => {
-  const [update, setUpdate] = useState<TeacherType | null>(null);
+  const [update, setUpdate] = useState<TeachersType | null>(null);
   const [open, setOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const [params, setParams] = useState({
     page: 1,
     limit: 10
@@ -32,10 +33,9 @@ const Teachers = () => {
   const { handlePagination } = useGeneral();
   const { mutate: deleteFn, isPending: isDeleting } = useTeachersDelete();
   const deleteItem = async (id: number) => {
-    console.log(id);
     deleteFn(id);
   }
-  const editItem = (record: TeacherType) => {
+  const editItem = (record: TeachersType) => {
     setUpdate(record);
     setOpen(true);
   }
@@ -53,28 +53,50 @@ const Teachers = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (_: any, record: TeacherType) => (
+      render: (_: any, record: TeachersType) => (
         <>
-          <Space>
-            <Button type="primary" size="small" onClick={() => editItem(record)}>
-              <EditOutlined />
-            </Button>
-            {<PopConfirm handleDelete={() => deleteItem(record.id!)} loading={isDeleting} />}
+          <Space size={"middle"}>
+            <Tooltip title="Edit">
+              <Button type="primary" size="small" onClick={() => editItem(record)}>
+                <EditOutlined />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Delete">
+              {deleteId === record.id && (
+                <PopConfirm
+                  openPop={true}
+                  setOpenPop={(open) => setDeleteId(open ? record.id! : null)}
+                  handleDelete={() => {
+                    deleteItem(record.id!);
+                    setDeleteId(null);
+                  }}
+                  loading={isDeleting}
+                />
+              )}
+              <Button
+                type="primary"
+                size="small"
+                danger
+                onClick={() => setDeleteId(record.id!)}
+              >
+                <DeleteOutlined />
+              </Button>
+            </Tooltip>
           </Space>
         </>
       )
     }
-  ]
+  ];
+
   return (
     <>
       <div className="w-[100%] flex flex-col items-center">
         <div className="w-[100%] h-[40px] flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Teachers</h1>
-          <Tooltip title = "Add Teacher">
+          <h1 className="text-2xl font-bold">Teachers</h1>
+          <Tooltip title="Add Teacher">
             <Button
               type="primary"
               onClick={toggle}
-              size="large"
             >
               Add teacher
             </Button>
@@ -83,7 +105,7 @@ const Teachers = () => {
         <Table
           columns={columns}
           dataSource={data?.data.data}
-          rowKey={(row)=> row.id!}
+          rowKey={(row) => row.id!}
           pagination={{
             current: params.page,
             pageSize: params.limit,
@@ -102,10 +124,10 @@ const Teachers = () => {
             marginTop: '10px'
           }}
         />
-        {open && <TeacherModal 
+        {open && <TeachersModal
           open={open}
-          toggle={toggle} 
-          update={update} 
+          toggle={toggle}
+          update={update}
         />}
       </div>
     </>

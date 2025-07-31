@@ -1,8 +1,8 @@
 import { Button } from "antd"
 import { useRef } from "react"
-import type { Lesson } from "@types"
+import type { LessonsType } from "@types"
 
-export const LessonsList = ({ lessons }: { lessons: Lesson[] }) => {
+export const LessonsList = ({ lessons }: { lessons: LessonsType[] }) => {
     const containerRef = useRef<HTMLDivElement>(null)
     const scrollPosition = 0
     const handleScroll = () => {
@@ -32,7 +32,7 @@ export const LessonsList = ({ lessons }: { lessons: Lesson[] }) => {
             <Button type="primary" disabled={isStartDisabled()} onClick={goPrev}>prev</Button>
             <div className="overflow-scroll flex gap-1 [&::-webkit-scrollbar]:hidden" ref={containerRef} onScroll={handleScroll} style={{ scrollBehavior: 'smooth' }} id="lessons">
                 {
-                    lessons.map((lesson: Lesson, index: number) => {
+                    lessons.map((lesson: LessonsType, index: number) => {
                         return <div key={lesson.id} className="p-2 bg-[#ccc] rounded-lg "><span>{index + 1}</span></div>
                     })
                 }

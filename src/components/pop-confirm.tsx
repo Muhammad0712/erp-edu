@@ -1,28 +1,32 @@
-import { DeleteOutlined } from '@ant-design/icons'
-import { Button, Popconfirm } from 'antd'
+import { Modal } from "antd";
+
 interface Props {
+  openPop: boolean,
+  setOpenPop: (open: boolean) => void,
   handleDelete: () => void,
   loading?: boolean,
 }
 
-const PopConfirm = ({ handleDelete, loading }: Props) => {
+const PopConfirm = ({ openPop, setOpenPop, handleDelete, loading }: Props) => {
   return (
-    <>
-      
-      <Popconfirm
-        title="Delete the item"
-        description="Are you sure to delete this item?"
-        okText="Yes"
-        cancelText="No"
-        disabled={loading}
-        onConfirm={handleDelete}
-      >
-        <Button type="primary" size='small' danger onClick={handleDelete}>
-          <DeleteOutlined />
-        </Button>
-      </Popconfirm>
-    </>
-  )
-}
+    <Modal
+      open={openPop}
+      onCancel={() => setOpenPop(false)}
+      onOk={handleDelete}
+      title="O'chirishni tasdiqlang"
+      okText="Ha, o'chirish"
+      cancelText="Bekor qilish"
+      okButtonProps={{
+        danger: true,
+        loading: loading
+      }}
+      cancelButtonProps={{
+        disabled: loading
+      }}
+    >
+      <p>Ushbu elementni o'chirishni tasdiqlaysizmi?</p>
+    </Modal>
+  );
+};
 
 export default PopConfirm

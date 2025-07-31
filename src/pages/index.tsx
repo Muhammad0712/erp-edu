@@ -12,13 +12,22 @@ const Teachers = lazy(() => import('./teachers/teachers'));
 const Courses = lazy(() => import('./courses/courses'));
 const Groups = lazy(() => import('./groups/erp-groups'));
 const SignIn = lazy(() => import('./auth/sign-in'));
-const SignUp = lazy(() => import('./auth/sign-up'));
 const Rooms = lazy(() => import('./rooms/rooms'));
+const Profile = lazy(() => import('./profile/profile'));
+const TeacherGroups = lazy(() => import('./teacher-groups/teacher-groups'));
+const GroupStudents = lazy(() => import('./teacher-groups/group-students'));
+
+// Lazy loading modals
+const StudentsModal = lazy(() => import('./students/modals/students-modal'));
+const TeachersModal = lazy(() => import('./teachers/modals/teacher.modal'));
 
 export {
+    // Layouts
     LayoutProtected,
     LoginProtected,
     TeacherLayout,
+    TeacherGroups,
+    GroupStudents,
     AdminLayout,
     SingleGroup,
     Teachers,
@@ -26,8 +35,11 @@ export {
     NotFound,
     Branches,
     Courses,
+    Profile,
     SignIn,
-    SignUp,
     Groups,
-    Rooms
+    Rooms,
+    // Modals
+    StudentsModal,
+    TeachersModal,
 }

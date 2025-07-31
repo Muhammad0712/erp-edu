@@ -2,8 +2,10 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 
 import App from "../App";
 import {
+    GroupStudents,
     LayoutProtected,
     LoginProtected,
+    TeacherGroups,
     TeacherLayout,
     AdminLayout,
     SingleGroup,
@@ -14,7 +16,6 @@ import {
     Courses,
     Groups,
     SignIn,
-    SignUp,
     Rooms
 } from "@pages";
 const Router = () => {
@@ -29,8 +30,6 @@ const Router = () => {
 
                 }>
                     <Route index element={<LoginProtected><SignIn /></LoginProtected>} />
-                    <Route path="/sign-up" element={<SignUp />} />
-
                     {/* ADMIN LAYOUT */}
                     <Route path="/admin" element={<LayoutProtected><AdminLayout /></LayoutProtected>}>
                         <Route index element={<Groups />} />
@@ -44,7 +43,8 @@ const Router = () => {
 
                     {/* TEACHER LAYOUT */}
                     <Route path="/teacher" element={<TeacherLayout />}>
-                        <Route element={<div>Teacher Dashboard</div>} />
+                        <Route index element={<TeacherGroups />} />
+                        <Route path="group-students/:id" element={<GroupStudents />} />
                     </Route>
 
                     {/* STUDENT LAYOUT */}

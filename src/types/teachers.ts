@@ -1,4 +1,4 @@
-export interface TeacherType{
+export interface TeachersType{
     id?: number;
     first_name: string;
     last_name: string;
@@ -6,5 +6,5 @@ export interface TeacherType{
     password: string;
     phone: string;
     role: string;
-    branch_id: number;
+    branchId: Array<number>;
 }

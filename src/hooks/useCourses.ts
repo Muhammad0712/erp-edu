@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { coursesService } from "@service/courses.service";
-import type { Course, ParamsType } from "@types";
+import type { CoursesType, ParamsType } from "@types";
 
 
 
@@ -13,7 +13,7 @@ const useCourses = (params?: ParamsType) => {
 
     const useCoursesCreate = () => {
         return useMutation({
-            mutationFn: async (data: Course) => coursesService.createCourse(data),
+            mutationFn: async (data: CoursesType) => coursesService.createCourse(data),
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['courses'] })
             }
@@ -22,9 +22,7 @@ const useCourses = (params?: ParamsType) => {
 
     const useCoursesUpdate = () => {
         return useMutation({
-            mutationFn: async (data: Course) => {
-                coursesService.updateCourse(data)
-            },
+            mutationFn: async ({ data, id }: { data: CoursesType, id: number }) => coursesService.updateCourse(data, id),
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['courses'] })
             }

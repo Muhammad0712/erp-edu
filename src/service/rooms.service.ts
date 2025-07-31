@@ -16,8 +16,8 @@ export const roomsService = {
         const res = await apiConfig().getRequest(`${ApiUrls.ROOMS}/${model.id}`)
         return res
     },
-    async updateRoom(model: RoomsType) {
-        const res = await apiConfig().patchRequest(`${ApiUrls.ROOMS}/${model.id}`, model)
+    async updateRoom(model: any, id: number) {
+        const res = await apiConfig().patchRequest(`${ApiUrls.ROOMS}/${id}`, model)
         return res
     },
     async deleteRoom(id: number): Promise<any> {

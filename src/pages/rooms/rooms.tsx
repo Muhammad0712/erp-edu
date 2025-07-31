@@ -1,5 +1,5 @@
 import { Button, Space, Table, Tooltip, type TablePaginationConfig } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useLocation } from 'react-router-dom';
 import RoomsModal from './modals/rooms.modal';
 import { useEffect, useState } from 'react';
@@ -11,6 +11,7 @@ import { useRooms } from '@hooks';
 const Rooms = () => {
   const [update, setUpdate] = useState<RoomsType | null>(null);
   const [open, setOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const [params, setParams] = useState({
     page: 1,
     limit: 10
@@ -55,15 +56,37 @@ const Rooms = () => {
       key: 'actions',
       render: (_: any, record: RoomsType) => (
         <>
-          <Space>
-            <Button type="primary" size="small" onClick={() => editItem(record)}>
-              <EditOutlined />
-            </Button>
-            <PopConfirm handleDelete={() => deleteItem(record.id!)} loading={isDeleting} />
+          <Space size={"middle"}>
+            <Tooltip title="Edit">
+              <Button type="primary" size="small" onClick={() => editItem(record)}>
+                <EditOutlined />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Delete">
+              {deleteId === record.id && (
+                <PopConfirm
+                  openPop={true}
+                  setOpenPop={(open) => setDeleteId(open ? record.id! : null)}
+                  handleDelete={() => {
+                    deleteItem(record.id!);
+                    setDeleteId(null);
+                  }}
+                  loading={isDeleting}
+                />
+              )}
+              <Button
+                type="primary"
+                size="small"
+                danger
+                onClick={() => setDeleteId(record.id!)}
+              >
+                <DeleteOutlined />
+              </Button>
+            </Tooltip>
           </Space>
         </>
-      ),
-    },
+      )
+    }
   ];
 
   return (
@@ -73,7 +96,6 @@ const Rooms = () => {
         <Tooltip title='Add Room'>
           <Button type="primary"
             onClick={() => setOpen(true)}
-            size='large'
           >
             Add Room
           </Button>

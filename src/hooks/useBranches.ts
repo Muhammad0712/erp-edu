@@ -22,9 +22,7 @@ const useBranches = (params?: ParamsType) => {
 
     const useBranchesUpdate = () => {
         return useMutation({
-            mutationFn: async (data: BranchesType) => {
-                branchesService.updateBranch(data)
-            },
+            mutationFn: async ({data, id}: {data: BranchesType, id: number}) => branchesService.updateBranch(data, id),
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['branches'] })
             }

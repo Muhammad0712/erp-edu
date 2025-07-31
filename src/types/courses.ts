@@ -1,10 +1,11 @@
-export interface Course{
+export interface CoursesType{
     id?: number;
     title: string;
     description: string;
     price: number;
-    duration: string;
+    duration: number;
     lessons_in_a_week: number;
+    lessons_in_a_month: number;
     lesson_duration: number;
 };
 

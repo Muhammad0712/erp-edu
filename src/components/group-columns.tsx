@@ -1,7 +1,7 @@
 import { type ColumnsType } from 'antd/es/table';
-import { type Group } from '@types';
+import { type GroupsType } from '@types';
 
-export const GroupColumns: ColumnsType<Group> = [
+export const GroupColumns: ColumnsType<GroupsType> = [
     {
         title: 'Group Name',
         dataIndex: 'name',
@@ -27,5 +27,14 @@ export const GroupColumns: ColumnsType<Group> = [
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
+    },
+    {
+        title: 'Room',
+        dataIndex: 'lessons',
+        key: 'lessons',
+        render: (data) => {
+            const room = data?.[0]?.room;
+            return room ? <span>{room.name}</span> : <span>N/A</span>;
+        }
     },
 ];

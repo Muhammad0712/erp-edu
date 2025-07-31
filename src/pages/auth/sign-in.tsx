@@ -11,7 +11,7 @@ import { signInSchema } from "@utils";
 const SignIn = () => {
   const [passwordVisible, setPasswordVisible] = React.useState(false);
   const navigate = useNavigate();
-  const { mutate } = useAuth();
+  const { mutate, isPending: isLoading } = useAuth();
 
   const {
     control,
@@ -137,7 +137,7 @@ const SignIn = () => {
         </Form.Item>
 
         <Form.Item style={{ width: "84%", display: "flex", justifyContent: "end" }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={isLoading} disabled={isLoading}>
             Submit
           </Button>
         </Form.Item>

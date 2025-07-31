@@ -1,4 +1,4 @@
-export interface Lesson {
+export interface LessonsType {
     id?: number;
     title: string;
     notes: string;

@@ -15,23 +15,14 @@ const AvatarDropdown = () => {
     const items: MenuProps['items'] = [
         {
             key: '1',
-            label: 'My Account'
+            label: 'Profile',
+            extra: '⌘P',
         },
         {
             type: 'divider',
         },
         {
             key: '2',
-            label: 'Profile',
-            extra: '⌘P',
-        },
-        {
-            key: '3',
-            label: 'Billing',
-            extra: '⌘B',
-        },
-        {
-            key: '4',
             label: 'Log Out',
             icon: <img src={logOut} alt="logout" style={{ width: 16 }} />,
             onClick: handleLogOut,

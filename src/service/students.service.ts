@@ -17,8 +17,8 @@ export const studentsService = {
         const res = await apiConfig().postRequest(ApiUrls.STUDENTS, payload)
         return res;
     },
-    async updateStudent(model: StudentsType): Promise<any> {
-        const res = await apiConfig().patchRequest(`${ApiUrls.STUDENTS}/${model.id}`, model);
+    async updateStudent(model: StudentsType, id: number): Promise<any> {
+        const res = await apiConfig().patchRequest(`${ApiUrls.STUDENTS}/${id}`, model);
         return res
     },
     async deleteStudent(id: number): Promise<any> {

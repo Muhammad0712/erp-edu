@@ -3,7 +3,7 @@ import { studentsService } from "@service/students.service"
 import type { ParamsType, StudentsType } from "@types";
 
 
-export const useStudent = (params: ParamsType) => {
+export const useStudent = (params?: ParamsType) => {
     const queryClient = useQueryClient()
     const { data } = useQuery({
         queryKey: ['students', params],
@@ -12,7 +12,10 @@ export const useStudent = (params: ParamsType) => {
 
     const useStudentCreate = () => {
         return useMutation({
-            mutationFn: async (data: StudentsType) => studentsService.createStudent(data),
+            mutationFn: async (data: StudentsType) => {
+                console.log(data);
+                return studentsService.createStudent(data)
+            },
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['groups'] })
             }
@@ -20,9 +23,7 @@ export const useStudent = (params: ParamsType) => {
     }
     const useStudentUpdate = () => {
         return useMutation({
-            mutationFn: async (data: StudentsType) => {
-                studentsService.updateStudent(data)
-            },
+            mutationFn: async ({ data, id }: { data: StudentsType, id: number }) => studentsService.updateStudent(data, id),
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['students'] })
             }
