@@ -22,8 +22,8 @@ export const courseFormSchema = yup.object().shape({
 export const teacherFormSchema = yup.object().shape({
     first_name: yup.string().required('First name is required'),
     last_name: yup.string().required('Last name is required'),
-    email: yup.string().email().required('Email is required'),
-    password: yup.string().min(5).required('Password is required'),
+    email: yup.string().email().required('Email is required'), 
+    password: yup.string().optional(),
     phone: yup.string().required('Phone is required'),
     role: yup.string().required('Role is required'),
     branchId: yup.array().of(yup.number()).min(1, 'At least one branch is required'),

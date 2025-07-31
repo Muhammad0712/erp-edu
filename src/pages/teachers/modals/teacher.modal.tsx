@@ -2,9 +2,10 @@ import type { BranchesType, ModalProps, TeachersType } from '@types'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { teacherFormSchema } from '@utils'
-import { Button, Form, Input, InputNumber, Modal, Select } from 'antd'
+import { Button, Form, Input, Modal, Select } from 'antd'
 import { useBranches, useTeachers } from '@hooks'
 import { useEffect } from 'react'
+import { IMaskInput } from 'react-imask'
 
 interface TeacherProps extends ModalProps {
     update: TeachersType | null
@@ -14,7 +15,7 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
     const { useTeacherCreate, useTeacherUpdate } = useTeachers();
     const { mutate: createFn, isPending: isCreating } = useTeacherCreate();
     const { mutate: updateFn, isPending: isUpdating } = useTeacherUpdate();
-    const {data: branches} = useBranches();
+    const { data: branches } = useBranches();
 
     const {
         control,
@@ -55,26 +56,16 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
     }, [update, setValue, reset]);
 
     const onSubmit = (data: any) => {
-        const formattedData = {
-            ...data,
-            phone: `+998${data.phone}`
-        };
-
-        // Update qilayotganda password bo'sh bo'lsa, uni olib tashlash
-        if (update?.id && !formattedData.password) {
-            delete formattedData.password;
-        }
-
-
         if (update?.id) {
-            updateFn({ data: formattedData, id: update.id }, {
+            delete data.password
+            updateFn({ data: data, id: update.id }, {
                 onSuccess: () => {
                     toggle();
                     reset();
                 }
             });
         } else {
-            createFn(formattedData, {
+            createFn(data, {
                 onSuccess: () => {
                     toggle();
                     reset();
@@ -169,24 +160,26 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
                     />
                 </Form.Item>
 
-                <Form.Item
-                    label={update?.id ? 'New Password (optional)' : 'Password'}
-                    validateStatus={errors.password ? 'error' : ""}
-                    help={errors.password?.message}
-                >
-                    <Controller
-                        name='password'
-                        control={control}
-                        render={({ field }) => (
-                            <Input.Password
-                                {...field}
-                                status={errors.password ? 'error' : ""}
-                                placeholder={update?.id ? "Leave empty to keep current password" : "Password"}
-                                size="large"
-                            />
-                        )}
-                    />
-                </Form.Item>
+                {
+                    !update?.id && <Form.Item
+                        label={update?.id ? 'New Password (optional)' : 'Password'}
+                        validateStatus={errors.password ? 'error' : ""}
+                        help={errors.password?.message}
+                    >
+                        <Controller
+                            name='password'
+                            control={control}
+                            render={({ field }) => (
+                                <Input.Password
+                                    {...field}
+                                    status={errors.password ? 'error' : ""}
+                                    placeholder={update?.id ? "Leave empty to keep current password" : "Password"}
+                                    size="large"
+                                />
+                            )}
+                        />
+                    </Form.Item>
+                }
 
                 <div style={{ display: 'flex', gap: '16px' }}>
                     <Form.Item
@@ -196,17 +189,29 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
                         style={{ flex: 1 }}
                     >
                         <Controller
-                            name="phone"
+                            name='phone'
                             control={control}
                             render={({ field }) => (
-                                <InputNumber
-                                    style={{ width: '100%' }}
+                                <IMaskInput
+                                    mask="+998 (00) 000-00-00"
+                                    placeholder="+998 (__) ___-__-__"
+                                    lazy={false}
+                                    unmask={true}
                                     {...field}
-                                    status={errors.phone ? 'error' : ""}
-                                    placeholder="Phone"
-                                    size="large"
-                                    addonBefore="+998"
                                     controls={false}
+                                    style={{
+                                        width: "100%",
+                                        padding: "6.5px 11px",
+                                        border: "1px solid #d9d9d9",
+                                        borderRadius: "6px",
+                                        fontSize: "14px",
+                                        lineHeight: "1.5715",
+                                        boxShadow: "none",
+                                        transition: "all 0.3s",
+                                        outline: "none",
+                                    }}
+                                    onFocus={(e) => (e.target.style.border = "1px solid #40a9ff")}
+                                    onBlur={(e) => (e.target.style.border = "1px solid #d9d9d9")}
                                 />
                             )}
                         />
@@ -248,7 +253,7 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
                         render={({ field, fieldState }) => (
                             <Select
                                 {...field}
-                                mode="multiple" 
+                                mode="multiple"
                                 placeholder="Select branch"
                                 options={branchOptions}
                                 status={fieldState.error ? "error" : ""}

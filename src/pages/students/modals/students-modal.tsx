@@ -4,7 +4,8 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useEffect } from "react";
 import type { ModalProps, StudentsType } from "@types";
 import { useStudent } from "@hooks";
-import { Button, DatePicker, Form, Input, InputNumber, Modal, Select } from "antd";
+import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
+import { IMaskInput } from 'react-imask';
 
 interface StudentProps extends ModalProps {
     update: StudentsType | null
@@ -42,8 +43,6 @@ const StudentsModal = ({ open, toggle, update }: StudentProps) => {
             setValue('last_name', update.last_name);
             setValue('email', update.email);
             setValue('phone', update.phone?.replace('+998', ''));
-            setValue('password_hash', "");
-            setValue('confirm_password', "");
             setValue('gender', update.gender);
             setValue('date_of_birth', update.date_of_birth);
             setValue('lidId', update.lidId!);
@@ -58,6 +57,8 @@ const StudentsModal = ({ open, toggle, update }: StudentProps) => {
             ...data,
             phone: `+998${data.phone}`
         };
+        delete formattedData.password_hash;
+        delete formattedData.confirm_password;
 
         if (update?.id) {
             updateStudent({ data: formattedData, id: update.id }, {
@@ -147,45 +148,69 @@ const StudentsModal = ({ open, toggle, update }: StudentProps) => {
                         name="phone"
                         control={control}
                         render={({ field }) => (
-                            <InputNumber
-                                style={{ width: '100%' }}
+                            // <InputNumber
+                            // style={{ width: '100%' }}
+                            // {...field}
+                            // status={errors.phone ? 'error' : ""}
+                            // placeholder="Phone"
+                            // addonBefore="+998"
+                            // controls={false}
+                            // />
+                            <IMaskInput
+                                mask="+998 (00) 000-00-00"
+                                placeholder="+998 (__) ___-__-__"
+                                lazy={false}
+                                unmask={true}
                                 {...field}
-                                status={errors.phone ? 'error' : ""}
-                                placeholder="Phone"
-                                addonBefore="+998"
                                 controls={false}
+                                style={{
+                                    width: "100%",
+                                    padding: "6.5px 11px",
+                                    border: "1px solid #d9d9d9",
+                                    borderRadius: "6px",
+                                    fontSize: "14px",
+                                    lineHeight: "1.5715",
+                                    boxShadow: "none",
+                                    transition: "all 0.3s",
+                                    outline: "none",
+                                }}
+                                onFocus={(e) => (e.target.style.border = "1px solid #40a9ff")}
+                                onBlur={(e) => (e.target.style.border = "1px solid #d9d9d9")}
                             />
                         )}
                     />
                 </Form.Item>
-                <Form.Item
-                    label="Password"
-                    name="password_hash"
-                    validateStatus={errors.password_hash ? "error" : ""}
-                    help={errors.password_hash && errors.password_hash?.message}
-                >
-                    <Controller
-                        name="password_hash"
-                        control={control}
-                        render={({ field }) => (
-                            <Input.Password {...field} status={errors.password_hash ? "error" : ""} placeholder="Password" id="password_hash" autoComplete="off" />
-                        )}
-                    />
-                </Form.Item>
-                <Form.Item
-                    label="Confirm Password"
-                    name="confirm_password"
-                    validateStatus={errors.confirm_password ? "error" : ""}
-                    help={errors.confirm_password && errors.confirm_password?.message}
-                >
-                    <Controller
-                        name="confirm_password"
-                        control={control}
-                        render={({ field }) => (
-                            <Input.Password {...field} status={errors.confirm_password ? "error" : ""} placeholder="Confirm Password" id="confirm_password" autoComplete="off" />
-                        )}
-                    />
-                </Form.Item>
+                {!update?.id &&
+                    <>
+                        <Form.Item
+                            label="Password"
+                            name="password_hash"
+                            validateStatus={errors.password_hash ? "error" : ""}
+                            help={errors.password_hash && errors.password_hash?.message}
+                        >
+                            <Controller
+                                name="password_hash"
+                                control={control}
+                                render={({ field }) => (
+                                    <Input.Password {...field} status={errors.password_hash ? "error" : ""} placeholder="Password" id="password_hash" autoComplete="off" />
+                                )} 
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            label="Confirm Password"
+                            name="confirm_password"
+                            validateStatus={errors.confirm_password ? "error" : ""}
+                            help={errors.confirm_password && errors.confirm_password?.message}
+                        >
+                            <Controller
+                                name="confirm_password"
+                                control={control}
+                                render={({ field }) => (
+                                    <Input.Password {...field} status={errors.confirm_password ? "error" : ""} placeholder="Confirm Password" id="confirm_password" autoComplete="off" />
+                                )} />
+                        </Form.Item>
+                    </>
+                }
                 <Form.Item
                     label="Gender"
                     name="gender"

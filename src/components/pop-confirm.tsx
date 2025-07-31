@@ -13,9 +13,9 @@ const PopConfirm = ({ openPop, setOpenPop, handleDelete, loading }: Props) => {
       open={openPop}
       onCancel={() => setOpenPop(false)}
       onOk={handleDelete}
-      title="O'chirishni tasdiqlang"
-      okText="Ha, o'chirish"
-      cancelText="Bekor qilish"
+      title=""
+      okText="Delete"
+      cancelText="Cancel"
       okButtonProps={{
         danger: true,
         loading: loading
@@ -24,7 +24,7 @@ const PopConfirm = ({ openPop, setOpenPop, handleDelete, loading }: Props) => {
         disabled: loading
       }}
     >
-      <p>Ushbu elementni o'chirishni tasdiqlaysizmi?</p>
+      <p>Are you sure you want to delete this item?</p>
     </Modal>
   );
 };
