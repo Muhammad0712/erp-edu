@@ -30,10 +30,10 @@ export const LessonsList = ({ lessons }: { lessons: LessonsType[] }) => {
     return (
         <div className="flex gap-2 items-center">
             <Button type="primary" disabled={isStartDisabled()} onClick={goPrev}>prev</Button>
-            <div className="overflow-scroll flex gap-1 [&::-webkit-scrollbar]:hidden" ref={containerRef} onScroll={handleScroll} style={{ scrollBehavior: 'smooth' }} id="lessons">
+            <div className="overflow-y-scroll flex gap-1 [&::-webkit-scrollbar]:hidden" ref={containerRef} onScroll={handleScroll} style={{ scrollBehavior: 'smooth' }} id="lessons">
                 {
                     lessons.map((lesson: LessonsType, index: number) => {
-                        return <div key={lesson.id} className="p-2 bg-[#ccc] rounded-lg "><span>{index + 1}</span></div>
+                        return <div key={lesson.id} className="p-2 bg-[#ccc] rounded-lg "><span>{index+1}</span></div>
                     })
                 }
             </div>

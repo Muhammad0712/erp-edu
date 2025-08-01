@@ -18,4 +18,5 @@ export class ApiUrls {
     // GROUPS
     public static GROUPS: string = '/group';
     public static GROUP_STUDENTS: string = '/group-students';
+    public static GROUP_TEACHERS: string = '/group-teachers';
 }

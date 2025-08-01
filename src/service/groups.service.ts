@@ -17,6 +17,10 @@ export const groupsService = {
         const res = await apiConfig().getRequest(`${ApiUrls.GROUP_STUDENTS}/${id!}/`, params)
         return res
     },
+    async getTeachersByGroupId(params: ParamsType, id: number){
+        const res = await apiConfig().getRequest(`${ApiUrls.GROUP_TEACHERS}/${id!}/`, params)
+        return res
+    },
     async createGroup(payload: GroupsType): Promise<any>{
         const res = await apiConfig().postRequest(ApiUrls.GROUPS, payload)
         return res

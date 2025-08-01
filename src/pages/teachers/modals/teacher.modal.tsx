@@ -57,7 +57,7 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
 
     const onSubmit = (data: any) => {
         if (update?.id) {
-            delete data.password
+            delete data.password;
             updateFn({ data: data, id: update.id }, {
                 onSuccess: () => {
                     toggle();
@@ -195,8 +195,9 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
                                 <IMaskInput
                                     mask="+998 (00) 000-00-00"
                                     placeholder="+998 (__) ___-__-__"
-                                    lazy={false}
                                     unmask={true}
+                                    onAccept={(value) => field.onChange(value)}
+                                    lazy={false}
                                     {...field}
                                     controls={false}
                                     style={{

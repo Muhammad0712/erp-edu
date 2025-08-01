@@ -146,7 +146,6 @@ const Groups = () => {
             showSizeChanger: true,
             pageSizeOptions: ["4", "5", "6", "7", "10"],
           }}
-          style={{ width: "100%" }}
           onChange={handleTableChange}
         />
       </div>

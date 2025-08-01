@@ -45,8 +45,8 @@ const BranchModal = ({ open, toggle, update }: BranchProps) => {
   }, [update, setValue, reset]);
 
   const onSubmit = (data: any) => {
-    console.log(data, 'formattedData');
     if (update?.id) {
+      
       updateFn({ data: data, id: update.id }, {
         onSuccess: () => {
           toggle();
@@ -142,6 +142,7 @@ const BranchModal = ({ open, toggle, update }: BranchProps) => {
               <IMaskInput
                 mask="+998 (00) 000-00-00"
                 placeholder="+998 (__) ___-__-__"
+                onAccept={(value) => field.onChange(value)}
                 lazy={false}
                 unmask={true}
                 {...field}

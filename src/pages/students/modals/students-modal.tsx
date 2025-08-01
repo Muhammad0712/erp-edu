@@ -30,7 +30,6 @@ const StudentsModal = ({ open, toggle, update }: StudentProps) => {
             email: '',
             phone: '',
             password_hash: '',
-            confirm_password: '',
             gender: '',
             date_of_birth: '',
             lidId: NaN,
@@ -57,10 +56,9 @@ const StudentsModal = ({ open, toggle, update }: StudentProps) => {
             ...data,
             phone: `+998${data.phone}`
         };
-        delete formattedData.password_hash;
-        delete formattedData.confirm_password;
-
+        
         if (update?.id) {
+            delete formattedData.password_hash;
             updateStudent({ data: formattedData, id: update.id }, {
                 onSuccess: () => {
                     toggle();
@@ -161,6 +159,7 @@ const StudentsModal = ({ open, toggle, update }: StudentProps) => {
                                 placeholder="+998 (__) ___-__-__"
                                 lazy={false}
                                 unmask={true}
+                                onAccept={(value) => field.onChange(value)}
                                 {...field}
                                 controls={false}
                                 style={{
@@ -196,7 +195,7 @@ const StudentsModal = ({ open, toggle, update }: StudentProps) => {
                                 )} 
                             />
                         </Form.Item>
-                        <Form.Item
+                        {/* <Form.Item
                             label="Confirm Password"
                             name="confirm_password"
                             validateStatus={errors.confirm_password ? "error" : ""}
@@ -208,7 +207,7 @@ const StudentsModal = ({ open, toggle, update }: StudentProps) => {
                                 render={({ field }) => (
                                     <Input.Password {...field} status={errors.confirm_password ? "error" : ""} placeholder="Confirm Password" id="confirm_password" autoComplete="off" />
                                 )} />
-                        </Form.Item>
+                        </Form.Item> */}
                     </>
                 }
                 <Form.Item

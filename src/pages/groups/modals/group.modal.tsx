@@ -4,7 +4,7 @@ import type { GroupsType, ModalProps, RoomsType } from '@types';
 import { useCourses, useGroup, useRooms } from '@hooks';
 import { useForm, Controller } from "react-hook-form";
 import { groupFormSchema } from '@utils';
-import { useEffect, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback, memo } from "react";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
 
@@ -16,10 +16,9 @@ interface GroupProps extends ModalProps {
   update: GroupsType | null;
 }
 
-const GroupModal = ({ open, toggle, update }: GroupProps) => {
+const GroupModal = memo(({ open, toggle, update }: GroupProps) => {
   const { data: courses } = useCourses();
   const { data: rooms } = useRooms();
-  console.log(update);
 
   const { useGroupCreate, useGroupUpdate } = useGroup({ page: 1, limit: 10 });
   const { mutate: createGroup, isPending: isCreating } = useGroupCreate();
@@ -107,6 +106,7 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
     }
   }, [update?.id, createGroup, updateGroup, toggle, reset]);
 
+  console.log('object');
   const handleCancel = useCallback(() => {
     toggle();
     reset();
@@ -322,6 +322,6 @@ const GroupModal = ({ open, toggle, update }: GroupProps) => {
       </Form>
     </Modal>
   );
-};
+});
 
 export default GroupModal;
