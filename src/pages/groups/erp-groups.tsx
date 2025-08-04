@@ -57,7 +57,7 @@ const Groups = () => {
   );
 
   const editItem = useCallback((record: GroupsType) => {
-    const roomId = record.lessons?.[0]?.room?.id;
+    const roomId = Number(record.lessons?.[0]?.room?.id);
     setUpdate({ ...record, roomId });
     setOpen(true);
   }, []);

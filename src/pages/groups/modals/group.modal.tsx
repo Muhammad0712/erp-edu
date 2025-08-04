@@ -63,7 +63,6 @@ const GroupModal = memo(({ open, toggle, update }: GroupProps) => {
     { value: "completed", label: "Completed" },
   ], []);
 
-  // Optimized form update
   useEffect(() => {
     if (update?.id) {
       const formData = {
@@ -83,7 +82,6 @@ const GroupModal = memo(({ open, toggle, update }: GroupProps) => {
     }
   }, [update, setValue, reset]);
 
-  // Memoized callbacks
   const onSubmit = useCallback((data: any) => {
     const commonCallbacks = {
       onSuccess: () => {

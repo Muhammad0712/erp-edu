@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { groupsService } from "@service/groups.service"
-import type { GroupsType, ParamsType } from "@types";
+import type { GroupsType, GroupTeachersType, ParamsType } from "@types";
 
 
 export const useGroup = (params?: ParamsType, id?: number) => {
     const queryClient = useQueryClient()
+    // Group querys
     const { data } = useQuery({
         queryKey: ['groups', params],
         queryFn: async () => groupsService.getGroups(params!)
@@ -16,6 +17,7 @@ export const useGroup = (params?: ParamsType, id?: number) => {
     });
     const group = getGroupById.data;
 
+    // Group students relation
     const getStudentsByGroupId = useQuery({
         queryKey: ['group-students', params],
         queryFn: async () => groupsService.getStudentsByGroupId(params!, id!),
@@ -23,6 +25,7 @@ export const useGroup = (params?: ParamsType, id?: number) => {
     });
     const students = getStudentsByGroupId.data;
 
+    // Group teachers relation
     const getTeachersByGroupId = useQuery({
         queryKey: ['group-teachers', params],
         queryFn: async () => groupsService.getTeachersByGroupId(params!, id!),
@@ -30,6 +33,25 @@ export const useGroup = (params?: ParamsType, id?: number) => {
     })
     const teachers = getTeachersByGroupId.data;
 
+    const useGroupTeacherCreate = () => {
+        return useMutation({
+            mutationFn: async (data: GroupTeachersType) => groupsService.addGroupTeacher(data),
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['group-teachers'] })
+            }
+        })
+    }
+
+    const useGroupTeacherDelete = () => {
+        return useMutation({
+            mutationFn: async (id: number) => groupsService.deleteGroupTeacher(id),
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['group-teachers'] })
+            }
+        })
+    }
+
+    // Group mutations
     const useGroupCreate = () => {
         return useMutation({
             mutationFn: async (data: GroupsType) => groupsService.createGroup(data),
@@ -40,7 +62,7 @@ export const useGroup = (params?: ParamsType, id?: number) => {
     }
     const useGroupUpdate = () => {
         return useMutation({
-            mutationFn: async ({ data, id }: { data: GroupsType, id: number}) => {
+            mutationFn: async ({ data, id }: { data: GroupsType, id: number }) => {
                 console.log(data, "data");
                 console.log(id, "id");
                 return groupsService.updateGroup(data, id);
@@ -63,6 +85,8 @@ export const useGroup = (params?: ParamsType, id?: number) => {
         group,
         students,
         teachers,
+        useGroupTeacherCreate,
+        useGroupTeacherDelete,
         useGroupCreate,
         useGroupUpdate,
         useGroupDelete

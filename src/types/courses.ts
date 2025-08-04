@@ -8,8 +8,3 @@ export interface CoursesType{
     lessons_in_a_month: number;
     lesson_duration: number;
 };
-
-export type TypeCourse = {
-    id: number;
-    title: string;
-}

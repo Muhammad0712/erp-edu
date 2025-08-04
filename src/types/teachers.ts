@@ -7,4 +7,5 @@ export interface TeachersType{
     phone: string;
     role: string;
     branchId: Array<number>;
+    avatar_url?: string;
 }

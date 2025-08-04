@@ -56,8 +56,12 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
     }, [update, setValue, reset]);
 
     const onSubmit = (data: any) => {
+        const formattedData = {
+            ...data,
+            phone: `+998${data.phone}`
+        }
         if (update?.id) {
-            delete data.password;
+            delete formattedData.password;
             updateFn({ data: data, id: update.id }, {
                 onSuccess: () => {
                     toggle();
@@ -65,7 +69,7 @@ const TeacherModal = ({ open, toggle, update }: TeacherProps) => {
                 }
             });
         } else {
-            createFn(data, {
+            createFn(formattedData, {
                 onSuccess: () => {
                     toggle();
                     reset();

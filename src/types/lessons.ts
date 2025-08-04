@@ -1,3 +1,5 @@
+import type { RoomsType } from "./rooms";
+
 export interface LessonsType {
     id?: number;
     title: string;
@@ -6,4 +8,5 @@ export interface LessonsType {
     status: string;
     groupId: number;
     roomId: number;
+    room: RoomsType;
 }

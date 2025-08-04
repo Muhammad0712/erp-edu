@@ -1,4 +1,5 @@
-import type { LessonsType, StudentsType, TeachersType } from "@types"
+import type { CoursesType } from "./courses";
+import type { LessonsType } from "./lessons";
 
 export interface GroupsType {
     id?: number,
@@ -6,32 +7,10 @@ export interface GroupsType {
     courseId: number,
     start_date: string,
     start_time: string,
-    status: string,
+    status?: string,
     roomId: number,
-    course?: {
-        id: number
-    },
-    lessons: [
-        {
-            room: {
-                id: number
-            }
-        }
-    ],
-    room?: {
-        id: number
-    }
-}
-
-export interface GroupLessonsType {
+    course: CoursesType;
     lessons: LessonsType[]
 }
 
-export interface GroupStudentsType {
-    students: StudentsType[]
-}
-
-export interface GroupTeachersType {
-    teachers: TeachersType[]
-}
 

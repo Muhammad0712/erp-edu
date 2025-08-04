@@ -1,433 +1,301 @@
-import React, { useState, useMemo } from 'react';
+import { useParams } from "react-router-dom";
+import { useGroup } from "@hooks";
+import { Button, Card, Row, Table, Tooltip } from "antd";
+import TeachersCollapse from "./teachers-collapse/teachers-collapse";
 import {
-  Card,
-  Row,
-  Col,
-  Table,
-  Button,
-  Input,
-  Select,
-  Space,
-  Tag,
-  Tooltip,
-  Progress,
-  Descriptions,
-  Avatar,
-  Typography,
-  Spin
-} from 'antd';
-import {
-  SearchOutlined,
-  PlusOutlined,
-  EditOutlined,
-  EyeOutlined,
-  UserOutlined,
-  ClockCircleOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SyncOutlined,
-} from '@ant-design/icons';
-import { useGroup } from '@hooks';
-import { useParams } from 'react-router-dom';
-import type { LessonsType } from '@types';
+  BookOutlined,
+  CalendarOutlined,
+  CommentOutlined,
+  DeleteOutlined,
+  DollarOutlined,
+  FieldTimeOutlined,
+  HourglassOutlined,
+} from "@ant-design/icons";
 
-const { Title, Text } = Typography;
-const { Option } = Select;
+import { LessonsList, StudentsColumns } from "@components";
+import { useState } from "react";
+import type { StudentsType } from "@types";
+import AddTeacherToGroupModal from "./modals/add-teacher-to-group-modal";
 
-const SingleGroup = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-
+const SingleGroups = () => {
   const { id } = useParams();
-  const { students, group, teachers } = useGroup({ page: 1, limit: 10 }, Number(id));
+  const { teachers, group, students } = useGroup(undefined, Number(id))
+  const [openTacherModal, setOpenTacherModal] = useState(false);
 
-  // Extract real data from hooks
-  const groupData = group?.data?.group;
-  const studentData = students?.data?.student;
-  const teacherData = teachers?.data?.teacher;
-  const lessons = groupData?.lessons || [];
+  const course = group?.data?.group?.course
+  const groupData = group?.data?.group
 
-  // Calculate statistics from real data
-  const stats = useMemo(() => {
-    if (!lessons.length) return {
-      total: 0,
-      completed: 0,
-      inProgress: 0,
-      upcoming: 0,
-      cancelled: 0,
-      progress: 0
-    };
+  const allStudents = students?.data.map((item: any) => ({
+    id: item.id,
+    first_name: item.student.first_name,
+    last_name: item.student.last_name,
+    email: item.student.email,
+    phone: item.student.phone,
+    date_of_birth: item.student.date_of_birth,
+    status: item.status
+  }))
 
-    const completed = lessons.filter((l: any) => l.status === 'completed').length;
-    const inProgress = lessons.filter((l: any) => l.status === 'in_progress').length;
-    const upcoming = lessons.filter((l: any) => l.status === 'new').length;
-    const cancelled = lessons.filter((l: any) => l.status === 'cancelled').length;
-
-    return {
-      total: lessons.length,
-      completed,
-      inProgress,
-      upcoming,
-      cancelled,
-      progress: lessons.length > 0 ? Math.round((completed / lessons.length) * 100) : 0
-    };
-  }, [lessons]);
-
-  // Filter lessons
-  const filteredLessons = useMemo(() => {
-    return lessons.filter((lesson: LessonsType) => {
-      const matchesSearch = lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lesson.notes.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || lesson.status === statusFilter;
-      return matchesSearch && matchesStatus;
+  const lessonsLength = (lessons: any) => {
+    let count = 0;
+    lessons?.forEach(() => {
+      count = count + 1;
     });
-  }, [lessons, searchTerm, statusFilter]);
+    return count;
+  }
 
-  // Status rendering functions
-  const getStatusTag = (status: string) => {
-    const statusConfig: any = {
-      completed: { color: 'success', icon: <CheckCircleOutlined />, text: 'Success' },
-      in_progress: { color: 'processing', icon: <SyncOutlined spin />, text: 'Processing' },
-      new: { color: 'warning', icon: <ClockCircleOutlined />, text: 'New' },
-      cancelled: { color: 'error', icon: <CloseCircleOutlined />, text: 'Cancelled' },
-      
-    };
 
-    const config= statusConfig[status]  || statusConfig.new;
-    return (
-      <Tag color={config.color} icon={config.icon}>
-        {config.text}
-      </Tag>
-    );
-  };
+  const SeparationByStatus = (lessons: any, status: string) => {
+    let count = 0;
+    lessons?.forEach((lesson: any) => {
+      if (lesson.status === status) {
+        count = count + 1;
+      }
+    });
+    return count;
+  }
 
-  // MODAL HANDLERS - Bu yerda modal ochish funksiyalari
-  const handleLessonView = (lesson: any) => {
-    // TODO: Dars tafsilotlarini ko'rsatish modal ochish
-    console.log('Dars tafsilotlari modal:', lesson);
-  };
-
-  const handleLessonEdit = (lesson: any) => {
-    // TODO: Darsni tahrirlash modal ochish
-    console.log('Darsni tahrirlash modal:', lesson);
-  };
-
-  const handleAddLesson = () => {
-    // TODO: Yangi dars qo'shish modal ochish
-    console.log('Yangi dars qo\'shish modal');
-  };
-
-  const handleAddStudent = () => {
-    // TODO: Yangi talaba qo'shish modal ochish
-    console.log('Yangi talaba qo\'shish modal');
-  };
-
-  // Lessons table columns
-  const lessonColumns = [
+  const columns = [
+    ...(StudentsColumns),
     {
-      title: 'Lesson name',
-      dataIndex: 'title',
-      key: 'title',
-      render: (text: string) => <Text strong>{text}</Text>
-    },
-    {
-      title: 'Description',
-      dataIndex: 'notes',
-      key: 'notes',
-      ellipsis: true
-    },
-    {
-      title: 'Start Date',
-      dataIndex: 'date',
-      key: 'date',
-      render: (date: string) => new Date(date).toLocaleDateString('uz-UZ')
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status: string) => getStatusTag(status)
-    },
-    {
-      title: 'Actions',
+      title: 'actions',
+      dataIndex: 'actions',
       key: 'actions',
-      render: (_: any, record: any) => (
-        <Space>
-          <Tooltip title="Ko'rish">
+      render: (_: any, record: StudentsType) => (
+        <div>
+          <Tooltip title="Edit">
             <Button
               type="primary"
               size="small"
-              icon={<EyeOutlined />}
-              onClick={() => handleLessonView(record)} // MODAL: Dars tafsilotlari
-            />
+              danger
+            >
+              <DeleteOutlined />
+            </Button>
           </Tooltip>
-          <Tooltip title="Edit">
-            <Button
-              size="small"
-              icon={<EditOutlined />}
-              onClick={() => handleLessonEdit(record)} // MODAL: Darsni tahrirlash
-            />
-          </Tooltip>
-        </Space>
+        </div>
       )
     }
-  ];
-
-  // Loading state
-  if (!groupData) {
-    return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
-        <Spin size="large" />
-        <div style={{ marginTop: 16 }}>Ma'lumotlar yuklanmoqda...</div>
-      </div>
-    );
-  }
+  ]
 
   return (
-    <div style={{ padding: 24 }}>
-      {/* Header */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col span={24}>
-          <Card>
-            <Row justify="space-between" align="middle">
-              <Col>
-                <Title level={2} style={{ margin: 0 }}>
-                  {groupData.name}
-                </Title>
-                <Text type="secondary" style={{ fontSize: 16 }}>
-                  {groupData.course?.title || 'Course'}
-                </Text>
-                <div style={{ marginTop: 8 }}>
-                  <Tag icon={<ClockCircleOutlined />}>
-                    {groupData.start_time} - {groupData.end_time}
-                  </Tag>
-                  <Tag>
-                    Haftada {groupData.course?.lessons_in_a_week || 0} dars
-                  </Tag>
-                </div>
-              </Col>
-              <Col>
-                <div style={{ textAlign: 'right' }}>
-                  <Progress
-                    type="circle"
-                    percent={stats.progress}
-                    size={80}
-                    format={(percent) => `${percent}%`}
-                  />
-                  <div style={{ marginTop: 8 }}>
-                    <Tag color={groupData.status === 'active' ? 'success' : 'default'}>
-                      {groupData.status?.toUpperCase() || 'ACTIVE'}
-                    </Tag>
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Statistics */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={3} style={{ margin: 0, color: '#1890ff' }}>
-                {stats.total}
-              </Title>
-              <Text>All Lessons</Text>
-            </div>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={3} style={{ margin: 0, color: '#52c41a' }}>
-                {stats.completed}
-              </Title>
-              <Text>Finished</Text>
-            </div>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={3} style={{ margin: 0, color: '#faad14' }}>
-                {stats.upcoming}
-              </Title>
-              <Text>Pending</Text>
-            </div>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <div style={{ textAlign: 'center' }}>
-              <Title level={3} style={{ margin: 0, color: '#ff4d4f' }}>
-                {stats.cancelled}
-              </Title>
-              <Text>Cancelled</Text>
-            </div>
-          </Card>
-        </Col>
-      </Row>
-
-      <Row gutter={[16, 16]}>
-        {/* Course Info */}
-        <Col xs={24} lg={16}>
-          <Card title="Course information" style={{ marginBottom: 16 }}>
-            <Descriptions column={2} bordered>
-              <Descriptions.Item label="Start Date">
-                {new Date(groupData.start_date).toLocaleDateString('uz-UZ')}
-              </Descriptions.Item>
-              <Descriptions.Item label="End Date">
-                {new Date(groupData.end_date).toLocaleDateString('uz-UZ')}
-              </Descriptions.Item>
-              <Descriptions.Item label="Duration">
-                {groupData.course?.duration || 0} oy
-              </Descriptions.Item>
-              <Descriptions.Item label="Price">
-                {groupData.course?.price?.toLocaleString() || '0'} so'm
-              </Descriptions.Item>
-              <Descriptions.Item label="Description" span={2}>
-                {groupData.course?.description || 'No description'}
-              </Descriptions.Item>
-            </Descriptions>
-          </Card>
-
-          {/* Lessons Table */}
-          <Card
-            title="Lessons list"
-            extra={
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={handleAddLesson} // MODAL: Yangi dars qo'shish
-              >
-                Yangi Dars
-              </Button>
-            }
+    <>
+      <div className="flex justify-between">
+        {/* Teachers card */}
+        <Card
+          style={{
+            width: '70%',
+            maxHeight: '550px',
+            overflow: 'auto',
+            paddingTop: '0px',
+            padding: 0,
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+          className="hide-scrollbar"
+        >
+          <div
+            style={{
+              width: '100%',
+              height: '50px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              backgroundColor: '#fff',
+              position: 'sticky',
+              top: 0,
+              zIndex: 100,
+              borderBottom: '1px solid #f0f0f0'
+            }}
           >
-            <Space style={{ marginBottom: 16, width: '100%' }} direction="vertical">
-              <Row gutter={[8, 8]}>
-                <Col xs={24} sm={16}>
-                  <Input
-                    placeholder="Search lesson by title"
-                    prefix={<SearchOutlined />}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </Col>
-                <Col xs={24} sm={8}>
-                  <Select
-                    style={{ width: '100%' }}
-                    placeholder="Filter by status"
-                    value={statusFilter}
-                    onChange={setStatusFilter}
-                  >
-                    <Option value="all">Barcha</Option>
-                    <Option value="completed">Tugallangan</Option>
-                    <Option value="in_progress">Jarayonda</Option>
-                    <Option value="new">Yangi</Option>
-                    <Option value="cancelled">Bekor qilingan</Option>
-                  </Select>
-                </Col>
-              </Row>
-            </Space>
+            <h1 style={{ marginBottom: '10px', fontSize: '32px', fontFamily: 'Poppins', }} >Teachers</h1>
+            <Button type="primary" className="!bg-[green] hover:!bg-green-600" onClick={() => setOpenTacherModal(true)}> Add teacher</Button>
+            {teachers && <AddTeacherToGroupModal open={openTacherModal} toggle={() => setOpenTacherModal(false)} teachers={teachers.data} />}
+          </div>
+          {teachers && <TeachersCollapse data={teachers?.data} />}
+        </Card>
 
-            <Table
-              columns={lessonColumns}
-              dataSource={filteredLessons}
-              rowKey="id"
-              pagination={{
-                pageSize: 10,
-                showSizeChanger: true,
-                showQuickJumper: true,
-                showTotal: (total) => `Lessons: ${total}`
-              }}
-              size="middle"
-            />
-          </Card>
-        </Col>
 
-        {/* Participants */}
-        <Col xs={24} lg={8}>
-          {/* Teacher */}
-          {teacherData && (
-            <Card title="Teacher" style={{ marginBottom: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Avatar
-                  size={64}
-                  src={teacherData.avatar_url}
-                  icon={<UserOutlined />}
-                />
-                <div>
-                  <Title level={4} style={{ margin: 0 }}>
-                    {teacherData.first_name} {teacherData.last_name}
-                  </Title>
-                  <Text type="secondary">{teacherData.role}</Text>
-                  <div style={{ marginTop: 8 }}>
-                    <div>{teacherData.email}</div>
-                    <div>{teacherData.phone}</div>
-                    <Tag color={teacherData.is_active ? 'success' : 'default'}>
-                      {teacherData.is_active ? 'Active' : 'Inactive'}
-                    </Tag>
-                  </div>
-                </div>
+        {/* Course information */}
+        <Card
+          style={{
+            width: '29%',
+            height: '550px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          {/* Group information */}
+          <div className="w-full h-[240px] flex flex-col gap-2 mt-[40px] text-[16px]">
+            <div className="w-full flex items-center justify-center border-b-1 border-b-gray-400">
+              <Tooltip title={groupData?.name} placement="left">
+                <p className="text-3xl font-bold font-[Poppins]">{groupData?.name.length > 10 ? `${groupData?.name.slice(0, 10)}...` : groupData?.name}</p>
+              </Tooltip>
+            </div>
+            <div className="w-full flex gap-2 justify-between">
+              <div className="flex gap-2">
+                <CalendarOutlined />
+                <span className=""> Start date:</span>
               </div>
-            </Card>
-          )}
-
-          {/* Student */}
-          <Card
-            title="Students"
-            extra={
-              <Button
-                type="link"
-                icon={<PlusOutlined />}
-                onClick={handleAddStudent} // MODAL: Yangi talaba qo'shish
-              >
-                Add
-              </Button>
-            }
-          >
-            {studentData ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Avatar
-                  size={48}
-                  src={studentData.avatar_url}
-                  icon={<UserOutlined />}
-                />
-                <div>
-                  <Title level={5} style={{ margin: 0 }}>
-                    {studentData.first_name} {studentData.last_name}
-                  </Title>
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    {studentData.email}
-                  </Text>
-                  <div style={{ marginTop: 4 }}>
-                    <Text style={{ fontSize: 12 }}>{studentData.phone}</Text>
-                  </div>
-                </div>
+              <p className="text-[rgb(131,131,131)]">{groupData?.start_date}</p>
+            </div>
+            <div className="w-full flex gap-2 justify-between">
+              <div className="flex gap-2">
+                <CalendarOutlined />
+                <span className=""> End date:</span>
               </div>
-            ) : (
-              <div style={{ textAlign: 'center', padding: 20 }}>
-                <UserOutlined style={{ fontSize: 32, color: '#d9d9d9' }} />
-                <div style={{ marginTop: 8 }}>
-                  <Text type="secondary">Hech qanday talaba yo'q</Text>
-                </div>
-                <Button
-                  type="dashed"
-                  style={{ marginTop: 8 }}
-                  onClick={handleAddStudent} // MODAL: Yangi talaba qo'shish
-                >
-                  Add student
-                </Button>
+              <p className="text-[rgb(131,131,131)]">{groupData?.end_date}</p>
+            </div>
+            <div className="w-full flex gap-2 justify-between">
+              <div className="flex gap-2">
+                <FieldTimeOutlined />
+                <span className=""> Start time:</span>
               </div>
-            )}
-          </Card>
-        </Col>
-      </Row>
-    </div>
-  );
-};
+              <p className="text-[rgb(131,131,131)]">{groupData?.start_time}</p>
+            </div>
+            <div className="w-full flex gap-2 justify-between">
+              <div className="flex gap-2">
+                <FieldTimeOutlined />
+                <span className=""> End time:</span>
+              </div>
+              <p className="text-[rgb(131,131,131)]">{groupData?.end_time}</p>
+            </div>
+            <div className="w-full flex gap-2 justify-between">
+              <div className="flex gap-2">
+                <BookOutlined />
+                <span className=""> Lessons:</span>
+              </div>
+              <p className="text-[rgb(131,131,131)]">{lessonsLength(groupData?.lessons)}</p>
+            </div>
+          </div>
+          {/* Course information */}
+          <div className="w-full flex items-center justify-center gap-2">
+            <span className="text-[20px] font-bold font-[Poppins]">{course?.title}</span>
+          </div>
 
-export default SingleGroup;
+          <div className="flex flex-col justify-between w-full h-[170px] mt-[10px]">
+            <div className="text-[16px] flex justify-between">
+              <div className="flex gap-2">
+                <CalendarOutlined />
+                <span className="">Lessons per month: </span>
+              </div>
+              <p className="text-[rgb(131,131,131)]">{course?.lessons_in_a_month} times</p>
+            </div>
+            <div className="text-[16px] flex justify-between">
+              <div className="flex gap-2">
+                <CalendarOutlined />
+                <span className="">Lessons per week:</span>
+              </div>
+              <p className="text-[rgb(131,131,131)]">{course?.lessons_in_a_week} times</p>
+            </div>
+            <div className="text-[16px] flex justify-between">
+              <div className="flex gap-2">
+                <HourglassOutlined />
+                <span className="">Duration:</span>
+              </div>
+              <p className="text-[rgb(131,131,131)]">{course?.lesson_duration} minutes</p>
+            </div>
+            <div className="text-[16px] flex justify-between">
+              <div className="flex gap-2">
+                <DollarOutlined />
+                <span className="">Price: </span>
+              </div>
+              <p className="text-[rgb(131,131,131)]">{course?.price} so'm</p>
+            </div>
+            <div className="text-[16px] flex justify-between">
+              <div className="flex gap-2">
+                <CommentOutlined />
+                <span className="">Description: </span>
+              </div>
+              <Tooltip title={course?.description} placement="left">
+                <p className="text-[rgb(131,131,131)]">{course?.description.length > 10 ? `${course?.description.slice(0, 10)}...` : course?.description}</p>
+              </Tooltip>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Lessons */}
+      <Card
+        style={{
+          marginTop: '10px',
+        }}
+      >
+        <Row
+          style={{
+            width: '100%',
+            height: '50px',
+            display: 'flex',
+            alignItems: 'center',
+            borderBottom: '1px solid #9ca3af',
+            justifyContent: 'space-between'
+          }}
+        >
+          <p className="text-[20px] font-serif">Lessons</p>
+          <div className="w-[600px] h-[40px] flex items-center gap-2">
+            <div className="w-[25%] h-[24px] flex items-center justify-center gap-1">
+              <div className="w-[100px] h-[24px] bg-[rgb(173,255,173)] text-[green] flex items-center justify-center rounded-[15px]">
+                <p className="text-[11px]">Completed</p>
+              </div>
+              <p className="text-[15px]">: {SeparationByStatus(groupData?.lessons, 'completed')}</p>
+            </div>
+            <div className="w-[25%] h-[24px] flex items-center justify-center gap-1">
+              <div className="w-[100px] h-[24px] bg-[rgb(255,173,173)] text-[red] flex items-center justify-center rounded-[15px]">
+                <p className="text-[11px]">Cancelled</p>
+              </div>
+              <p className="text-[15px]">: {SeparationByStatus(groupData?.lessons, 'cancelled')}</p>
+            </div>
+            <div className="w-[25%] h-[24px] flex items-center justify-center gap-1">
+              <div className="w-[100px] h-[24px] bg-[rgb(173,173,255)] text-[blue] flex items-center justify-center rounded-[15px]">
+                <p className="text-[11px]">In progress</p>
+              </div>
+              <p className="text-[15px]">: {SeparationByStatus(groupData?.lessons, 'in_progress')}</p>
+            </div>
+            <div className="w-[25%] h-[24px] flex items-center justify-center gap-1">
+              <div className="w-[100px] h-[24px] bg-[rgb(225,225,225)] text-[gray] flex items-center justify-center rounded-[15px]">
+                <p className="text-[11px]">new</p>
+              </div>
+              <p className="text-[15px]">: {SeparationByStatus(groupData?.lessons, 'new')}</p>
+            </div>
+          </div>
+        </Row>
+        <div className="h-[90px] w-full">
+          <LessonsList lessons={groupData?.lessons || []} />
+        </div>
+      </Card>
+
+      {/* Students */}
+      <Card
+        style={{
+          marginTop: '10px',
+          width: '100%',
+          maxHeight: '500px'
+        }}
+      >
+        <Row
+          style={{
+            width: '100%',
+            height: '50px',
+            display: 'flex',
+            alignItems: 'center',
+            borderBottom: '1px solid #9ca3af',
+            justifyContent: 'space-between'
+          }}
+        >
+          <p className="text-[20px] font-serif">Students</p>
+          <Button type="primary" >Add student</Button>
+        </Row>
+        <div className="h-[400px] overflow-y-scroll w-full">
+          <Table
+            columns={columns}
+            dataSource={allStudents}
+            pagination={false}
+            rowKey="id"
+          />
+        </div>
+
+      </Card>
+    </>
+  )
+}
+
+export default SingleGroups

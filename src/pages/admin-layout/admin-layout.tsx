@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import {
+  BankOutlined,
   BookOutlined,
-  CodepenOutlined,
-  ContactsOutlined,
-  JavaScriptOutlined,
-  ReadOutlined,
+  HomeOutlined,
   TeamOutlined,
+  UsergroupAddOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, theme } from 'antd';
@@ -33,11 +33,11 @@ function getInfo(
 
 const items: MenuItem[] = [
   getInfo('Groups', 'admin', <TeamOutlined />),
-  getInfo('Courses', 'courses', <JavaScriptOutlined />),
-  getInfo('Teachers', 'teachers', <ReadOutlined />),
-  getInfo('Students', 'students', <BookOutlined />),
-  getInfo('Branches', 'branches', <ContactsOutlined />),
-  getInfo('Rooms', 'rooms', <CodepenOutlined />),
+  getInfo('Courses', 'courses', <BookOutlined />),
+  getInfo('Teachers', 'teachers', <UserOutlined />),
+  getInfo('Students', 'students', <UsergroupAddOutlined />),
+  getInfo('Branches', 'branches', <BankOutlined />),
+  getInfo('Rooms', 'rooms', <HomeOutlined />),
 ];
 
 const AdminLayout = () => {

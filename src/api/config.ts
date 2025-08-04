@@ -7,7 +7,6 @@ export function apiConfig() {
             const res = await axiosInstance.get(url, { params });
             return res
         } catch (error: any) {
-            console.log(error?.response?.data);
             Notification('error', error?.message)
             throw error
         }

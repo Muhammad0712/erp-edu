@@ -1,4 +1,16 @@
 @import "tailwindcss";
 @import './animations.css';
 
+/* *{
+    background-color: rgb(255, 173, 173);
+} */
+
+.teachers-card::-webkit-scrollbar {
+  display: none;
+}
+
+.teachers-card {
+  -ms-overflow-style: none;  /* IE va Edge */
+  scrollbar-width: none;     /* Firefox */
+}
 
